@@ -1577,7 +1577,7 @@ async function renderMe(){
   <div class="set"><div class="l"><b>Backup</b><small>Save everything as a file</small></div><button class="btn sm" id="meExp">Save a copy</button></div>
   <div class="set"><div class="l"><b>Load a file</b><small>Add a backup to your plans, or replace them</small></div>${IS_NATIVE&&window.PACELY_PLATFORM==='mac'?'<button class="btn sm" id="meImpN">Load…</button>':'<label class="btn sm">Load…<input type="file" id="meImp" accept=".json,application/json" hidden></label>'}</div>
   ${LOCALMODE?'':'<div class="set"><div class="l"><b>Log out</b></div><button class="btn sm danger" id="meOut">Log out</button></div>'}</div>
-  <p class="sub" style="text-align:center;margin:26px 0 8px">Pacely · self-hosted, no tracking, no ads, no subscription<br>Pacely 0.7.0 · made free and open source by Sam Fox, with Claude</p></div>`;
+  <p class="sub" style="text-align:center;margin:26px 0 8px">Pacely · self-hosted, no tracking, no ads, no subscription<br>Pacely 0.7.1 · made free and open source by Sam Fox, with Claude</p></div>`;
   $('#meMood').onclick=moodSheet;$('#meReview').onclick=reviewSheet;
   $('#meFont').onchange=e=>{applyFont(e.target.value);sfx('toggle-on')};
   if($('#aiTest'))$('#aiTest').onclick=async()=>{try{const r=await aiCall('/api/ai/check',{});

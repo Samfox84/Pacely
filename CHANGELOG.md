@@ -2,6 +2,9 @@
 
 What changed in each version of Pacely. Newest first. Pacely is still early, so versions are 0.x.
 
+## 0.7.1
+- iPhone: fixes "Invalid escape sequence" when building the iPhone app in Xcode from the 0.7.0 download
+
 ## 0.7.0
 - **iPhone: "Just use it on this phone"**. No server needed: plans stay on the iPhone, using the same on-device engine as the browser and Mac versions. Reminders, the Lock Screen countdown, calendars and the AI helper (with your own Gemini key) work; the family helper, live journeys, home screen widgets and the Apple Watch need a server
 - On-device engine: Make a list, Test the AI helper, quiet hours, and Gemini quietly trying another model when one is busy
