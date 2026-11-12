@@ -1,0 +1,40 @@
+2026-11-12 17:26:45.626 Df Pacely[19748:e1db] [com.apple.UIKit:KeyWindow] Setting default evaluation strategy for UIUserInterfaceIdiomPhone to LastOneWins
+2026-11-12 17:26:45.627 Df Pacely[19748:e1db] [com.apple.UIKit:KeyWindow] Setting default evaluation strategy for UIUserInterfaceIdiomPhone to SystemShellManaged
+2026-11-12 17:26:46.068 Df Pacely[19748:e1db] [PrototypeTools:domain] Not observing PTDefaults on customer install.
+2026-11-12 17:26:46.233 Df Pacely[19748:e1db] [com.apple.network:activity] Create activity from XPC object <nw_activity 50:1 [C4DF3AA6-8F0E-4C51-8C08-E73ED9F34872] (reporting strategy default)>
+2026-11-12 17:26:46.234 Df Pacely[19748:e1db] [com.apple.network:activity] Create activity from XPC object <nw_activity 50:2 [532B8AD5-3CA9-4FA7-A5CE-36E50550B024] (reporting strategy default)>
+2026-11-12 17:26:46.234 Df Pacely[19748:e1db] [com.apple.network:activity] Set activity <nw_activity 50:1 [C4DF3AA6-8F0E-4C51-8C08-E73ED9F34872] (reporting strategy default)> as the global parent
+2026-11-12 17:26:46.259 Df Pacely[19748:e1fb] [com.apple.coreaudio:ddagg]        AggregateDevice.mm:887   Creating DefaultDeviceAggregate
+2026-11-12 17:26:46.309 Df Pacely[19748:e1f0] [com.apple.coreaudio:aqme]           AQMixEngine.cpp:733   AQMEDevice (0x105442168) has neither a defaultOutStreamClient nor a defaultInStreamClient
+2026-11-12 17:26:46.332 Df Pacely[19748:e1f1] [com.apple.CFNetwork:Default] Task <F720E150-6435-424A-BD35-C129B74083D1>.<1> resuming, timeouts(10.0, 604800.0) qos(0x19) voucher((null)) activity(00000000-0000-0000-0000-000000000000)
+2026-11-12 17:26:46.375 Df Pacely[19748:e1f1] [com.apple.CFNetwork:Default] Initializing NSHTTPCookieStorage singleton
+2026-11-12 17:26:46.378 Df Pacely[19748:e1f1] [com.apple.CFNetwork:Default] Initializing CFHTTPCookieStorage singleton
+2026-11-12 17:26:46.378 Df Pacely[19748:e1f1] [com.apple.CFNetwork:Default] Creating default cookie storage with process/bundle identifier
+2026-11-12 17:26:46.380 Df Pacely[19748:e1f1] [com.apple.CFNetwork:Default] Initializing AlternativeServices Storage singleton
+2026-11-12 17:26:46.382 Df Pacely[19748:e1f1] [com.apple.FileURL:default] kExcludedFromBackupXattrName set on path: /Users/runner/Library/Developer/CoreSimulator/Devices/2FEACF5E-886C-4FB8-A137-C571FBA5CF5C/data/Containers/Data/Application/FA80C29F-27DD-4A3F-B8CC-847D5EA85E60/Library/HTTPStorages/io.github.samfox84.pacely
+2026-11-12 17:26:46.403 Df Pacely[19748:e1f9] [com.apple.coreaudio:aqme]  MEDeviceStreamClient.cpp:245   AQME Default-InputOutput: client starting: <CA_UISoundClientBase@0x1054250a0>; running count now 1
+2026-11-12 17:26:46.428 Df Pacely[19748:e1f1] [com.apple.CFNetwork:Default] Connection 1: starting, TC(0x0)
+2026-11-12 17:26:46.430 Df Pacely[19748:e1fb] [com.apple.coreaudio:aqme]  MEDeviceStreamClient.cpp:245   AQME Default-InputOutput: client starting: <AudioQueueObject@0x1058f6e00; ; [19748]; play>; running count now 2
+2026-11-12 17:26:46.444 Df Pacely[19748:e1f1] [com.apple.CFNetwork:Default] Task <F720E150-6435-424A-BD35-C129B74083D1>.<1> setting up Connection 1
+2026-11-12 17:26:46.445 Df Pacely[19748:e1f1] [com.apple.CFNetwork:Default] Connection 1: connected successfully
+2026-11-12 17:26:46.445 Df Pacely[19748:e1f1] [com.apple.CFNetwork:Default] Connection 1: ready C(N) E(N)
+2026-11-12 17:26:46.445 Df Pacely[19748:e1f1] [com.apple.CFNetwork:Default] Task <F720E150-6435-424A-BD35-C129B74083D1>.<1> now using Connection 1
+2026-11-12 17:26:46.448 Df Pacely[19748:e231] [com.apple.coreaudio:default] AQSTL aq(0x1058f6e00) start time resolved to: 2223 ioTS st: 2223 ht: 626.965787
+2026-11-12 17:26:46.454 Df Pacely[19748:e1f1] [com.apple.CFNetwork:Default] Task <F720E150-6435-424A-BD35-C129B74083D1>.<1> sent request, body N 0
+2026-11-12 17:26:46.474 Df Pacely[19748:e1f0] [com.apple.CFNetwork:Default] Garbage collection for alternative services
+2026-11-12 17:26:46.549 Df Pacely[19748:e1f0] [com.apple.CFNetwork:Default] Task <F720E150-6435-424A-BD35-C129B74083D1>.<1> received response, status 200 content K
+2026-11-12 17:26:46.549 Df Pacely[19748:e1f0] [com.apple.CFNetwork:Default] Task <F720E150-6435-424A-BD35-C129B74083D1>.<1> response ended
+2026-11-12 17:26:46.549 Df Pacely[19748:e1f0] [com.apple.CFNetwork:Default] Task <F720E150-6435-424A-BD35-C129B74083D1>.<1> done using Connection 1
+2026-11-12 17:26:46.550 Df Pacely[19748:e1f1] [com.apple.CFNetwork:Default] Task <F720E150-6435-424A-BD35-C129B74083D1>.<1> finished successfully
+2026-11-12 17:26:46.845 Df Pacely[19748:e1f9] [com.apple.CFNetwork:Default] Task <CE720136-67AE-414A-B033-726EA9DB5E4C>.<2> resuming, timeouts(30.0, 604800.0) qos(0x19) voucher((null)) activity(00000000-0000-0000-0000-000000000000)
+2026-11-12 17:26:46.848 Df Pacely[19748:e1f9] [com.apple.CFNetwork:Default] Task <CE720136-67AE-414A-B033-726EA9DB5E4C>.<2> now using Connection 1
+2026-11-12 17:26:46.849 Df Pacely[19748:e1f9] [com.apple.CFNetwork:Default] Task <CE720136-67AE-414A-B033-726EA9DB5E4C>.<2> sent request, body N 0
+2026-11-12 17:26:46.869 Df Pacely[19748:e1f0] [com.apple.CFNetwork:Default] Task <CE720136-67AE-414A-B033-726EA9DB5E4C>.<2> received response, status 304 content U
+2026-11-12 17:26:46.869 Df Pacely[19748:e1f0] [com.apple.CFNetwork:Default] Connection 1: cleaning up
+2026-11-12 17:26:46.869 Df Pacely[19748:e1f0] [com.apple.CFNetwork:Default] Task <CE720136-67AE-414A-B033-726EA9DB5E4C>.<2> done using Connection 1
+2026-11-12 17:26:46.870 Df Pacely[19748:e1f9] [com.apple.CFNetwork:Default] Task <CE720136-67AE-414A-B033-726EA9DB5E4C>.<2> finished successfully
+2026-11-12 17:26:46.876 Df Pacely[19748:e1fb] [com.apple.CFNetwork:Default] Task <16DE9028-E66F-44BD-974D-9E3A37070D09>.<3> resuming, timeouts(10.0, 604800.0) qos(0x19) voucher((null)) activity(00000000-0000-0000-0000-000000000000)
+2026-11-12 17:26:46.879 Df Pacely[19748:e1fb] [com.apple.CFNetwork:Default] Connection 2: starting, TC(0x0)
+2026-11-12 17:26:46.886 Df Pacely[19748:e1fb] [com.apple.CFNetwork:Default] Task <16DE9028-E66F-44BD-974D-9E3A37070D09>.<3> setting up Connection 2
+2026-11-12 17:26:46.888 Df Pacely[19748:e1f9] [com.apple.CFNetwork:Default] Task <A933A665-2940-4CD3-9AEF-443C300AD566>.<4> resuming, timeouts(10.0, 604800.0) qos(0x19) voucher((null)) activity(00000000-0000-0000-0000-000000000000)
+2026-11-12 17:26:46.889 Df Pacely[19748:e1f1] [com.apple.CFNetwork:Default] Task <A7E66835-FAF5-4429-B7AC-CD0A459DB7A1>.<5> resuming, timeouts(10.0, 604800.0) qos(0x19) voucher((null)) activity(00000000-0000-0000-0000-000000000000)
