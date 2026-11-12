@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>io.github.samfox84.pacely.refresh</string>
+	</array>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+	</array>
+	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>Pacely puts your plans in a Pacely calendar and shows events from your other calendars on your timeline.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>So you can say things to add to your plan instead of typing.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>So you can say things to add to your plan instead of typing.</string>
+	<key>NSSupportsLiveActivities</key>
+	<true/>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>io.github.samfox84.pacely</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>pacely</string>
+			</array>
+		</dict>
+	</array>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+</dict>
+</plist>

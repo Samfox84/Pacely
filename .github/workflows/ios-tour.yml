@@ -1,0 +1,36 @@
+# Runs the iPhone app in Apple's simulator with example plans and saves screenshots of every screen
+# (Actions › "iPhone app tour" › the run › Artifacts › screenshots).
+name: iPhone app tour
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['ios/Pacely/**', 'ios/Shared/**', 'server/app.py', 'tests/ios/**', '.github/workflows/ios-tour.yml']
+permissions:
+  contents: write
+jobs:
+  tour:
+    runs-on: macos-15
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Use the newest Xcode
+        run: sudo xcode-select -s "$(ls -d /Applications/Xcode*.app | sort -V | tail -1)" && xcodebuild -version
+      - name: Tour the app
+        run: bash tests/ios/simulator-tour.sh
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: screenshots
+          path: shots
+      - name: Keep the screenshots on the app-tour branch
+        if: always()
+        run: |
+          cd shots
+          git init -q -b app-tour
+          git config user.name "github-actions"; git config user.email "github-actions@users.noreply.github.com"
+          git add -A && git commit -q -m "iPhone app tour screenshots ($GITHUB_SHA)"
+          git push -q -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" app-tour

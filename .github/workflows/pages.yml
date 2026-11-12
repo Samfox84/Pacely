@@ -1,0 +1,31 @@
+# Publishes Pacely for the browser (Windows, Chromebooks, any computer) at https://samfox84.github.io/Pacely/
+# In that version your plans are kept in the browser on your own device; nothing is sent to GitHub.
+# Turn it on once: Settings › Pages › Source: GitHub Actions. (GitHub Pages needs the repository to be public.)
+name: Pacely in the browser
+on:
+  push:
+    branches: [main]
+    paths: ['server/static/**', '.github/workflows/pages.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: true
+jobs:
+  deploy:
+    if: ${{ !github.event.repository.private }}
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: server/static
+      - id: deployment
+        uses: actions/deploy-pages@v4

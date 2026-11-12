@@ -1,0 +1,58 @@
+# Checks Pacely on every change: the server (Python), the on-device engine (JavaScript) and the install scripts.
+name: Tests
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Server building blocks
+        run: pip install flask waitress pywebpush icalendar recurring_ical_events pytest
+      - name: Server tests and user journeys
+        run: python -m pytest -q tests
+      - name: On-device engine tests
+        run: node tests/local-engine.test.js
+      - name: iPhone "Just this phone" engine
+        run: node tests/iphone-engine.test.js
+      - name: Web app scripts load
+        run: |
+          node --check server/static/local.js
+          node --check server/static/sw.js
+          python3 - <<'PY'
+          import re, subprocess, tempfile
+          html = open('server/static/index.html', encoding='utf-8').read()
+          for i, s in enumerate(re.findall(r'<script>(.*?)</script>', html, re.S)):
+              f = tempfile.NamedTemporaryFile('w', suffix='.js', delete=False); f.write(s); f.close()
+              subprocess.run(['node', '--check', f.name], check=True)
+          print('index.html scripts OK')
+          PY
+      - name: Web app user journeys in a phone-sized browser
+        run: |
+          npm install --no-save playwright@1.48.2 >/dev/null
+          npx playwright install --with-deps chromium >/dev/null
+          export PACELY_DATA=$(mktemp -d) PACELY_TZ=Europe/London PACELY_PORT=8790
+          SEED=$(python3 tests/seed_demo.py)
+          PW=$(python3 -c "import json,sys;print(json.loads(sys.argv[1])['password'])" "$SEED")
+          SH=$(python3 -c "import json,sys;print(json.loads(sys.argv[1])['share'])" "$SEED")
+          (cd server && nohup python3 app.py > ../server.log 2>&1 &)
+          sleep 3
+          node tests/ui/web-journeys.js http://127.0.0.1:8790 "$PW" "$SH" journeys
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: journey-screenshots
+          path: journeys
+      - name: Install scripts
+        run: bash -n install.sh && bash -n setup-tunnel.sh && bash -n server/add-profile.sh && bash -n mac/Install-Pacely.command

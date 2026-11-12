@@ -1,0 +1,15 @@
+# Your data and secrets - never upload these
+data/
+profiles/
+*.db
+vapid.pem
+venv/
+__pycache__/
+*.pyc
+
+# Xcode
+build/
+DerivedData/
+xcuserdata/
+*.xcuserstate
+.DS_Store

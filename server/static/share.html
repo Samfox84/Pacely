@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Add to their plan</title>
+<meta name="theme-color" content="#FBF7F1" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#15171C" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Add for…">
+<link rel="apple-touch-icon" href="/icon-180.png">
+<link rel="icon" href="/icon-180.png">
+<style>
+:root{--bg:#FBF7F1;--card:#FFFFFF;--card2:#F4EFE7;--ink:#2B2A33;--muted:#77737F;--line:#ECE6DD;--accent:#2F7D78;--accent-ink:#FFFFFF;--danger:#C2513F;
+  --shadow:0 1px 2px rgba(40,30,20,.06),0 6px 20px rgba(40,30,20,.06);--r:18px;--love:#EE8FA6}
+@media (prefers-color-scheme:dark){:root{--bg:#15171C;--card:#1F2229;--card2:#262A32;--ink:#ECEAF0;--muted:#9A97A3;--line:#2D3039;--accent:#5CC3B8;--accent-ink:#0F2A28;
+  --danger:#E8806F;--shadow:0 1px 2px rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.25)}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.4 -apple-system,BlinkMacSystemFont,"SF Pro Rounded","Segoe UI",Roboto,sans-serif}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none;padding:0}
+.wrap{max-width:560px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 18px) 16px calc(env(safe-area-inset-bottom) + 40px)}
+h1{font-size:28px;line-height:1.15;margin:0 0 4px;letter-spacing:-.02em}
+h2{font-size:18px;margin:26px 0 10px}
+.sub{color:var(--muted);font-size:15px}
+.card{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);padding:16px}
+input[type=text],input[type=date],input[type=time],textarea{width:100%;background:var(--card2);border:2px solid transparent;border-radius:14px;padding:13px 14px;min-height:50px;outline:none}
+input:focus,textarea:focus{border-color:var(--accent)}
+textarea{min-height:70px;resize:vertical}
+label.f{display:block;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:16px 0 7px}
+.choices{display:flex;flex-wrap:wrap;gap:8px}
+.choice{background:var(--card2);border-radius:999px;padding:10px 15px;min-height:44px;font-weight:600}
+.choice.on{background:var(--accent);color:var(--accent-ink)}
+.btn{display:block;width:100%;background:var(--accent);color:var(--accent-ink);border-radius:16px;padding:15px;font-weight:700;font-size:18px;margin-top:20px;min-height:54px}
+.btn.ghost{background:var(--card2);color:var(--ink);font-size:16px}
+.hint{margin-top:8px;font-size:14px;color:var(--accent);min-height:20px}
+.day{margin-top:14px}
+.day b{display:block;font-size:14px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
+.it{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:14px;background:color-mix(in srgb,var(--c) 22%,var(--card));margin-bottom:6px}
+.it .e{font-size:22px;width:28px;text-align:center}
+.it .t{flex:1;min-width:0}
+.it .t div:first-child{font-weight:600;overflow-wrap:anywhere}
+.it .m{font-size:13px;color:var(--muted)}
+.it.done .t div:first-child{text-decoration:line-through;opacity:.6}
+.x{width:36px;height:36px;border-radius:50%;background:var(--card2);font-size:16px}
+.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 24px);transform:translateX(-50%) translateY(120px);background:var(--ink);color:var(--bg);
+  padding:12px 18px;border-radius:14px;font-weight:600;transition:transform .25s,opacity .25s;z-index:5;max-width:90vw;opacity:0}
+.toast.on{transform:translateX(-50%) translateY(0);opacity:1}
+.hidden{display:none!important}
+details{margin-top:10px}
+summary{cursor:pointer;font-weight:600;color:var(--accent);padding:6px 0}
+ol{padding-left:22px;margin:8px 0}
+li{margin:5px 0}
+code{background:var(--card2);padding:2px 6px;border-radius:6px;font-size:14px;overflow-wrap:anywhere}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"><p class="sub">Loading…</p></div>
+<div class="toast" id="toast"></div>
+<script src="/smart.js"></script>
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const BASE=location.pathname.replace(/\/+$/,'');
+const pad=n=>String(n).padStart(2,'0');
+const isoOf=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const addDays=(iso,n)=>{const d=new Date(iso+'T12:00:00');d.setDate(d.getDate()+n);return isoOf(d)};
+let D=null, F={title:'',date:null,start:'',allday:'',notes:''}, touched={date:false,start:false};
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('on'),2600)}
+function dayName(iso){
+  if(iso===D.today)return 'Today';if(iso===addDays(D.today,1))return 'Tomorrow';if(iso===addDays(D.today,-1))return 'Yesterday';
+  return new Date(iso+'T12:00:00').toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'short'});
+}
+async function load(){
+  try{const r=await fetch(BASE+'/data',{cache:'no-store'});D=await r.json();if(!r.ok)throw new Error(D.error||'Not found')}
+  catch(e){$('#app').innerHTML=`<h1>Link not working</h1><p class="sub">${esc(e.message)}</p><p class="sub">Ask for a new link.</p>`;return}
+  if(!F.date)F.date=D.today;
+  document.title='Add for '+D.owner;
+  render();
+}
+function render(){
+  const who=esc(D.owner);
+  const today=D.today, tom=addDays(today,1);
+  const dateChoice=F.date===today?'today':F.date===tom?'tom':'pick';
+  const byDay={};for(const it of D.items){if(it.date<today)continue;(byDay[it.date]=byDay[it.date]||[]).push(it)}
+  const list=Object.keys(byDay).sort().map(d=>`<div class="day"><b>${esc(dayName(d))}</b>${byDay[d].sort((a,b)=>(a.start?1:0)-(b.start?1:0)||String(a.start).localeCompare(String(b.start))).map(it=>
+    `<div class="it ${it.done?'done':''}" style="--c:${esc(it.color||'#7CB8F0')}"><span class="e">${esc(it.emoji||'📝')}</span>
+     <div class="t"><div>${esc(it.title)}</div><div class="m">${it.allday?'All day':it.start?esc(it.start):'Any time'}${it.mine?' · 💌 you added this':''}</div></div>
+     ${it.mine&&!it.done?`<button class="x" data-rm="${it.id}" aria-label="Remove">✕</button>`:''}</div>`).join('')}</div>`).join('');
+  $('#app').innerHTML=`
+  <h1>💌 Add something for ${who}</h1>
+  <p class="sub">It goes straight into ${who}'s plan, with a reminder.</p>
+  <div class="card" style="margin-top:16px">
+    <label class="f" for="title" style="margin-top:0">What is it?</label>
+    <input type="text" id="title" placeholder="e.g. Pick up prescription tomorrow 11am" value="${esc(F.title)}" maxlength="200" autocomplete="off" enterkeyhint="done">
+    <div class="hint" id="hint"></div>
+    <label class="f">Which day?</label>
+    <div class="choices"><button class="choice ${dateChoice==='today'?'on':''}" data-d="today">Today</button><button class="choice ${dateChoice==='tom'?'on':''}" data-d="tom">Tomorrow</button>
+      <button class="choice ${dateChoice==='pick'?'on':''}" data-d="pick">${dateChoice==='pick'?esc(dayName(F.date)):'Another day…'}</button></div>
+    <input type="date" id="date" value="${esc(F.date)}" class="${dateChoice==='pick'?'':'hidden'}" style="margin-top:8px">
+    <label class="f">What time?</label>
+    <div class="choices"><button class="choice ${!F.start&&!F.allday?'on':''}" data-t="any">Any time</button><button class="choice ${F.start?'on':''}" data-t="time">${F.start?esc(F.start):'Set a time'}</button>
+      <button class="choice ${F.allday?'on':''}" data-t="allday">All day</button></div>
+    <input type="time" id="time" value="${esc(F.start)}" class="${F.start?'':'hidden'}" style="margin-top:8px">
+    <details ${F.notes?'open':''}><summary>Add a note</summary><textarea id="notes" placeholder="Anything to remember">${esc(F.notes)}</textarea></details>
+    <button class="btn" id="send">Add to ${who}'s plan</button>
+  </div>
+  <h2>${D.see==='all'?`What ${who} has on`:'Things you have added'}</h2>
+  ${list||`<p class="sub">Nothing coming up yet.</p>`}
+  <h2>Keep this handy</h2>
+  <div class="card">
+    <p style="margin-top:0"><b>Save this page to your Home Screen</b> so it opens like an app.</p>
+    <p class="sub" style="margin:0">iPhone: tap Share <span aria-hidden="true">⬆️</span> then <b>Add to Home Screen</b>. Android: tap ⋮ then <b>Add to Home screen</b>.</p>
+    <details><summary>See ${who}'s plans in your own calendar</summary>
+      <p class="sub">Your calendar app will show ${D.see==='all'?`${who}'s plans`:'the things you add'} and keep them up to date.</p>
+      <a class="btn ghost" style="text-align:center;text-decoration:none" href="webcal://${esc(location.host+BASE)}.ics">📅 Add to my iPhone calendar</a>
+      <p class="sub" style="margin-top:14px"><b>Google Calendar (Android):</b> on a computer, open calendar.google.com › <b>Other calendars ＋</b> › <b>From URL</b>, and paste:</p>
+      <p><code id="icsurl">${esc(location.origin+BASE)}.ics</code></p>
+      <button class="btn ghost" id="copyIcs" style="margin-top:4px">Copy link</button>
+    </details>
+  </div>`;
+  bind();
+}
+function preview(){
+  const p=PacelySmart.parse($('#title').value,D.today);const bits=[];
+  if(p.date&&!touched.date)bits.push(dayName(p.date));
+  if(p.allday)bits.push('all day');else if(p.start&&!touched.start)bits.push('at '+p.start);
+  $('#hint').textContent=bits.length?'✨ '+bits.join(' · '):'';
+  // keep the day and time buttons in step with what they typed
+  if(!touched.date){const d=p.date||F.date,tom=addDays(D.today,1);
+    document.querySelectorAll('[data-d]').forEach(b=>{const v=b.dataset.d;b.classList.toggle('on',v==='today'?d===D.today:v==='tom'?d===tom:(d!==D.today&&d!==tom));
+      if(v==='pick')b.textContent=(d!==D.today&&d!==tom)?dayName(d):'Another day…'})}
+  if(!touched.start){const st=p.allday?'':(p.start||F.start),ad=p.allday||F.allday;
+    document.querySelectorAll('[data-t]').forEach(b=>{const v=b.dataset.t;b.classList.toggle('on',v==='any'?(!st&&!ad):v==='time'?!!st:!!ad);if(v==='time')b.textContent=st||'Set a time'})}
+  return p;
+}
+function bind(){
+  $('#title').oninput=()=>{F.title=$('#title').value;preview()};
+  $('#title').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();$('#title').blur()}};
+  preview();
+  document.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{F.title=$('#title').value;F.notes=($('#notes')||{}).value||F.notes;touched.date=true;
+    const v=b.dataset.d;if(v==='today')F.date=D.today;else if(v==='tom')F.date=addDays(D.today,1);else{render();$('#date').classList.remove('hidden');try{$('#date').showPicker()}catch(e){$('#date').focus()}return}render()});
+  $('#date').onchange=e=>{if(e.target.value){F.date=e.target.value;touched.date=true;F.title=$('#title').value;render()}};
+  document.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{F.title=$('#title').value;F.notes=($('#notes')||{}).value||F.notes;touched.start=true;
+    const v=b.dataset.t;if(v==='any'){F.start='';F.allday=''}else if(v==='allday'){F.start='';F.allday='day'}
+    else{F.allday='';render();$('#time').classList.remove('hidden');try{$('#time').showPicker()}catch(e){$('#time').focus()}return}render()});
+  $('#time').onchange=e=>{F.start=e.target.value;F.allday='';touched.start=true;F.title=$('#title').value;render()};
+  $('#send').onclick=send;
+  document.querySelectorAll('[data-rm]').forEach(b=>b.onclick=async()=>{if(!confirm('Take this out of the plan?'))return;
+    await fetch(BASE+'/item/'+b.dataset.rm,{method:'DELETE'});toast('Removed');load()});
+  if($('#copyIcs'))$('#copyIcs').onclick=async()=>{try{await navigator.clipboard.writeText($('#icsurl').textContent);toast('Link copied')}catch(e){toast('Press and hold the link to copy it')}};
+}
+async function send(){
+  F.title=$('#title').value.trim();F.notes=(($('#notes')||{}).value||'').trim();
+  if(!F.title){toast('What is it?');$('#title').focus();return}
+  const p=PacelySmart.parse(F.title,D.today);
+  const body={title:p.title||F.title,date:F.date,start:F.start||null,allday:F.allday,notes:F.notes};
+  if(!touched.date&&p.date)body.date=p.date;
+  if(!touched.start&&p.start&&!F.allday){body.start=p.start}
+  if(p.allday&&!touched.start){body.allday=p.allday==='day'?'day':p.allday;body.start=null}
+  if(p.duration)body.duration=p.duration;
+  const btn=$('#send');btn.disabled=true;btn.textContent='Sending…';
+  try{const r=await fetch(BASE+'/add',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+    const j=await r.json();if(!r.ok)throw new Error(j.error||'Didn’t send');
+    toast(`Added to ${D.owner}'s plan 💌`);F={title:'',date:D.today,start:'',allday:'',notes:''};touched={date:false,start:false};load();
+  }catch(e){toast(e.message||'Didn’t send. Try again.');btn.disabled=false;btn.textContent=`Add to ${D.owner}'s plan`}
+}
+load();
+</script>
+</body>
+</html>

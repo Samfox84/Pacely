@@ -1,0 +1,1781 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pacely</title>
+<meta name="theme-color" content="#FBF7F1" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#15171C" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Pacely">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<style>
+:root{
+  --bg:#FBF7F1;--card:#FFFFFF;--card2:#F4EFE7;--ink:#2B2A33;--muted:#77737F;--line:#ECE6DD;
+  --accent:#2F7D78;--accent-ink:#FFFFFF;--danger:#C2513F;--tint:.26;--shadow:0 1px 2px rgba(40,30,20,.06),0 6px 20px rgba(40,30,20,.06);
+  --r:18px;--tab:64px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#15171C;--card:#1F2229;--card2:#262A32;--ink:#ECEAF0;--muted:#9A97A3;--line:#2D3039;
+  --accent:#5CC3B8;--accent-ink:#0F2A28;--danger:#E8806F;--tint:.22;--shadow:0 1px 2px rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.25);}}
+:root[data-theme="dark"]{
+  --bg:#15171C;--card:#1F2229;--card2:#262A32;--ink:#ECEAF0;--muted:#9A97A3;--line:#2D3039;
+  --accent:#5CC3B8;--accent-ink:#0F2A28;--danger:#E8806F;--tint:.22;--shadow:0 1px 2px rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.25);}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 -apple-system,BlinkMacSystemFont,"SF Pro Rounded","Segoe UI",Roboto,Ubuntu,sans-serif;}
+body{min-height:100vh;padding-bottom:calc(var(--tab) + env(safe-area-inset-bottom) + 16px)}
+button,input,select,textarea{font:inherit;color:inherit}
+@font-face{font-family:'Atkinson Hyperlegible';src:url(fonts/AtkinsonHyperlegible-Regular.ttf) format('truetype');font-weight:400;font-display:swap}
+@font-face{font-family:'Atkinson Hyperlegible';src:url(fonts/AtkinsonHyperlegible-Bold.ttf) format('truetype');font-weight:600 800;font-display:swap}
+@font-face{font-family:'OpenDyslexic';src:url(fonts/OpenDyslexic-Regular.otf) format('opentype');font-display:swap}
+html[data-font=easy] body{font-family:'Atkinson Hyperlegible',sans-serif;letter-spacing:.01em;line-height:1.5}
+html[data-font=dyslexic] body{font-family:'OpenDyslexic',sans-serif;letter-spacing:.03em;word-spacing:.12em;line-height:1.65;font-size:15px}
+.trip{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--line)}
+.trip:first-child{border-top:0}.trip .i{font-size:20px;line-height:1.2}
+.commute .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.commute .chip{font-size:13px;padding:4px 10px;border-radius:999px;background:var(--line)}
+.commute .chip.bad{background:#F6C45355}
+.srcs{font-size:13px;margin-top:10px}.srcs a{color:inherit;opacity:.75}
+button{cursor:pointer;border:0;background:none;padding:0}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.wrap{max-width:720px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 14px) 16px 0}
+h1{font-size:30px;line-height:1.1;margin:0;letter-spacing:-.02em}
+h2{font-size:19px;margin:22px 0 10px}
+.sub{color:var(--muted);font-size:15px}
+.row{display:flex;align-items:center;gap:10px}
+.sp{flex:1}
+.card{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);padding:16px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:0 18px;border-radius:14px;background:var(--card2);font-weight:600}
+a.btn{text-decoration:none;color:inherit}
+.btn.pri{background:var(--accent);color:var(--accent-ink)}
+.btn.danger{color:var(--danger)}
+.btn.block{width:100%}
+.btn.sm{min-height:36px;padding:0 12px;font-size:14px;border-radius:11px}
+.icon-btn{width:44px;height:44px;border-radius:14px;background:var(--card);box-shadow:var(--shadow);display:grid;place-items:center;font-size:20px}
+.muted{color:var(--muted)}
+.hidden{display:none!important}
+input[type=text],input[type=password],input[type=time],input[type=date],input[type=number],select,textarea{
+  width:100%;min-height:48px;border:1.5px solid var(--line);background:var(--card);border-radius:13px;padding:10px 13px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+textarea{min-height:80px;resize:vertical}
+label.f{display:block;font-size:13px;font-weight:600;color:var(--muted);margin:14px 0 6px;text-transform:uppercase;letter-spacing:.04em}
+
+/* tabs */
+.tabs{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);display:flex;justify-content:space-around;
+  padding-bottom:env(safe-area-inset-bottom);z-index:20}
+.tabs button{flex:1;height:var(--tab);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:11px;color:var(--muted);font-weight:600}
+.tabs button span{display:grid;place-items:center;height:24px;font-size:22px}
+.tabs button .pi{width:22px;height:22px}
+.pi{vertical-align:-0.15em;flex:none}
+.mood-ic{display:inline-grid;place-items:center}
+.tabs button.on{color:var(--accent)}
+.tabs button.on span{color:var(--accent)}
+
+/* week strip */
+.week{display:flex;gap:6px;margin:16px 0 4px;align-items:center}
+.week .d{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 0;border-radius:14px;font-size:12px;color:var(--muted)}
+.week .d b{font-size:17px;color:var(--ink)}
+.week .d.sel{background:var(--accent);color:var(--accent-ink)}
+.week .d.sel b{color:var(--accent-ink)}
+.week .d.today:not(.sel) b{color:var(--accent)}
+.week .dot{height:5px;width:22px;border-radius:3px;background:var(--line);overflow:hidden}
+.week .dot i{display:block;height:100%;background:var(--accent)}
+.week .d.sel .dot{background:rgba(255,255,255,.35)}.week .d.sel .dot i{background:var(--accent-ink)}
+.week .arr{width:30px;height:40px;font-size:20px;color:var(--muted)}
+
+/* now card */
+.now{display:flex;gap:14px;align-items:center;margin:14px 0 6px}
+.ring{position:relative;width:78px;height:78px;flex:none}
+.ring svg{transform:rotate(-90deg)}
+.ring .e{position:absolute;inset:0;display:grid;place-items:center;font-size:30px}
+.now .t{font-size:13px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--accent)}
+.now .n{font-size:20px;font-weight:700;margin:2px 0}
+
+/* timeline */
+.tl{position:relative;margin-top:12px}
+.item{display:flex;gap:12px;margin-bottom:10px;align-items:stretch}
+.item .tm{width:46px;flex:none;text-align:right;font-size:13px;color:var(--muted);padding-top:12px;font-variant-numeric:tabular-nums}
+.blk{flex:1;display:flex;gap:12px;align-items:flex-start;border-radius:var(--r);padding:12px 12px 12px 12px;position:relative;text-align:left;
+  background:color-mix(in srgb,var(--c) calc(var(--tint)*100%),var(--card));transition:transform .15s}
+.blk:active{transform:scale(.985)}
+.blk .em{width:42px;height:42px;flex:none;border-radius:13px;background:var(--c);display:grid;place-items:center;font-size:22px;color:rgba(0,0,0,.72)}
+.blk .em .pi{width:24px;height:24px}
+.blk .ti{font-weight:700;font-size:16px;line-height:1.25}
+.blk .me{font-size:13px;color:var(--muted);margin-top:2px}
+.blk .bar{height:5px;border-radius:3px;background:rgba(127,127,127,.18);margin-top:8px;overflow:hidden;max-width:160px}
+.blk .bar i{display:block;height:100%;background:var(--c)}
+.blk.done{opacity:.55}.blk.done .ti{text-decoration:line-through}
+.blk.cur{outline:2.5px solid var(--c);outline-offset:2px}
+.chk{width:30px;height:30px;flex:none;border-radius:50%;border:2.5px solid var(--muted);display:grid;place-items:center;font-size:16px;margin-left:auto;align-self:center;color:transparent}
+.chk.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.pill{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;padding:2px 7px;border-radius:7px;background:var(--c);color:#1d1d22;margin-left:6px;vertical-align:2px}
+.gap{margin:0 0 10px 58px;font-size:13px;color:var(--muted);display:flex;align-items:center;gap:8px}
+.gap:before{content:"";flex:none;width:14px;border-top:2px dotted var(--line)}
+.nowline{display:flex;align-items:center;gap:8px;margin:0 0 10px;color:var(--danger);font-size:12px;font-weight:700}
+.nowline .tm{width:46px;text-align:right;font-variant-numeric:tabular-nums}
+.nowline:after{content:"";flex:1;border-top:2px solid var(--danger)}
+.empty{text-align:center;padding:40px 20px;color:var(--muted)}
+.empty .big{font-size:44px;margin-bottom:8px}
+.fab{position:fixed;right:18px;bottom:calc(var(--tab) + env(safe-area-inset-bottom) + 16px);width:60px;height:60px;border-radius:20px;background:var(--accent);color:var(--accent-ink);font-size:32px;box-shadow:0 8px 24px rgba(0,0,0,.2);z-index:15;display:grid;place-items:center}
+@media(min-width:760px){.fab{right:calc(50% - 360px + 18px)}}
+
+/* sheet */
+.scrim{position:fixed;inset:0;background:rgba(10,10,15,.45);z-index:40;opacity:0;transition:opacity .2s;pointer-events:none}
+.scrim.on{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:0;right:0;bottom:0;max-width:640px;margin:0 auto;max-height:92vh;overflow:auto;background:var(--bg);z-index:41;border-radius:24px 24px 0 0;
+  padding:10px 18px calc(24px + env(safe-area-inset-bottom));transform:translateY(105%);transition:transform .25s ease;overscroll-behavior:contain}
+.sheet.on{transform:none}
+.grab{width:42px;height:5px;border-radius:3px;background:var(--line);margin:0 auto 12px}
+.sheet h3{margin:0 0 4px;font-size:22px}
+.choices{display:flex;flex-wrap:wrap;gap:8px}
+.choice{min-height:40px;padding:0 14px;border-radius:12px;background:var(--card);border:1.5px solid var(--line);font-weight:600;font-size:15px}
+.choice.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 15%,var(--card))}
+.emojis{display:grid;grid-template-columns:repeat(8,1fr);gap:6px}
+.emojis button{aspect-ratio:1;border-radius:12px;font-size:22px;background:var(--card)}
+.emojis button.on{outline:2.5px solid var(--accent)}
+.swatches{display:flex;flex-wrap:wrap;gap:10px}
+.swatches button{width:38px;height:38px;border-radius:50%;background:var(--c)}
+.swatches button.on{outline:3px solid var(--ink);outline-offset:2px}
+.steps .st{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.steps .st:last-child{border-bottom:0}
+.steps .st span{flex:1}
+.steps .st.on span{text-decoration:line-through;color:var(--muted)}
+.stepedit{display:flex;gap:8px;margin-bottom:8px}
+.stepedit button{width:48px;flex:none;border-radius:13px;background:var(--card2);font-size:18px}
+.bigemoji{font-size:54px;width:84px;height:84px;border-radius:24px;display:grid;place-items:center;background:var(--c);margin-bottom:10px;color:rgba(0,0,0,.72)}
+
+/* todo */
+.todo{display:flex;align-items:center;gap:12px;padding:13px 4px;border-bottom:1px solid var(--line)}
+.todo .tt{flex:1;cursor:pointer}
+.todo.done .tt{text-decoration:line-through;color:var(--muted)}
+.todo .em{font-size:20px}
+
+/* focus */
+.timer{position:relative;width:min(78vw,320px);aspect-ratio:1;margin:18px auto 8px}
+.timer svg{width:100%;height:100%}
+.timer .c{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.timer .c b{font-size:52px;font-variant-numeric:tabular-nums;letter-spacing:-.02em;background:var(--bg);padding:2px 14px;border-radius:16px}
+.ctrl{display:flex;gap:10px;justify-content:center;margin:12px 0}
+
+/* routines */
+.rgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.rcard{text-align:left;padding:16px;border-radius:var(--r);background:var(--card);box-shadow:var(--shadow)}
+.rcard .e{font-size:30px}
+.rcard b{display:block;margin-top:6px;font-size:17px}
+.ritem{display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.ritem .e{width:36px;height:36px;border-radius:11px;background:var(--c);display:grid;place-items:center}
+.redit{background:var(--card);border-radius:14px;padding:12px;margin-bottom:10px}
+.redit .row input{min-height:42px}
+
+/* mood */
+.moods{display:flex;justify-content:space-between;gap:6px}
+.moods button{flex:1;font-size:34px;padding:8px 0;border-radius:14px;background:var(--card2)}
+.moods button.on{outline:2.5px solid var(--accent);background:color-mix(in srgb,var(--accent) 15%,var(--card))}
+.mhist{display:flex;gap:4px;align-items:flex-end;height:60px;margin:10px 0}
+.mhist i{flex:1;border-radius:4px 4px 0 0;background:var(--accent);opacity:.8;min-height:3px}
+.seg{display:flex;background:var(--card2);border-radius:13px;padding:3px;gap:3px;margin-top:14px}
+.seg button{flex:1;min-height:36px;border-radius:10px;font-weight:700;font-size:14px;color:var(--muted)}
+.seg button.on{background:var(--card);color:var(--ink);box-shadow:var(--shadow)}
+.allday{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0}
+.allday span{font-size:13px;font-weight:600;padding:5px 10px;border-radius:10px;background:color-mix(in srgb,var(--c) calc(var(--tint)*100%),var(--card))}
+.wk{margin-top:14px;display:grid;gap:10px}
+.wkday{background:var(--card);border-radius:var(--r);padding:12px 14px;box-shadow:var(--shadow);text-align:left;width:100%}
+.wkday.today{outline:2px solid var(--accent)}
+.wkday h4{margin:0 0 6px;font-size:15px;display:flex;gap:8px;align-items:baseline}
+.wkday h4 small{color:var(--muted);font-weight:600}
+.wkrow{display:flex;gap:8px;align-items:center;font-size:14px;padding:3px 0}
+.wkrow .t{width:42px;color:var(--muted);font-variant-numeric:tabular-nums;flex:none}
+.wkrow .s{width:8px;height:8px;border-radius:50%;background:var(--c);flex:none}
+.wkrow.done{opacity:.5;text-decoration:line-through}
+.mon{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:14px}
+.mon .h{text-align:center;font-size:12px;color:var(--muted);font-weight:700;padding:4px 0}
+.mon button{aspect-ratio:1/1.15;border-radius:12px;background:var(--card);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:6px;gap:4px;font-weight:700;font-size:15px}
+.mon button.out{opacity:.35}
+.mon button.today{outline:2px solid var(--accent)}
+.mon button.sel{background:var(--accent);color:var(--accent-ink)}
+.mon .dots{display:flex;gap:2px;flex-wrap:wrap;justify-content:center;max-width:34px}
+.mon .dots i{width:6px;height:6px;border-radius:50%;background:var(--c)}
+.late{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--muted);padding:6px 10px;border-radius:10px;background:var(--card2)}
+.move{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.move button{min-height:42px;border-radius:12px;background:var(--card);border:1.5px solid var(--line);font-weight:600;font-size:13px}
+.prio{display:inline-block;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;padding:4px 8px;border-radius:8px;background:var(--card2);color:var(--muted);flex:none}
+.prio.now{background:color-mix(in srgb,#F07F6E 30%,var(--card));color:var(--ink)}
+.prio.later{opacity:.7}
+.ghead{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:20px 0 2px;display:flex;gap:8px;align-items:center}
+.aicard{display:flex;gap:12px;align-items:flex-start;background:var(--card);border-radius:14px;padding:12px;margin-bottom:8px;border:1.5px solid var(--line)}
+.aicard.off{opacity:.45}
+.aicard .em{font-size:24px}
+.aicard ul{margin:6px 0 0;padding-left:18px;font-size:13px;color:var(--muted)}
+.spin{width:44px;height:44px;border-radius:50%;border:4px solid var(--line);border-top-color:var(--accent);animation:sp 1s linear infinite;margin:20px auto}
+@keyframes sp{to{transform:rotate(360deg)}}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.stat{background:var(--card2);border-radius:14px;padding:12px;text-align:center}
+.stat b{display:block;font-size:24px;font-variant-numeric:tabular-nums}
+.stat small{color:var(--muted);font-size:12px}
+.trophies{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
+.trophy{text-align:center;padding:10px 4px;border-radius:14px;background:var(--card2);font-size:11px;font-weight:600;line-height:1.2}
+.trophy span{display:block;font-size:26px;margin-bottom:4px}
+.trophy.no{opacity:.35;filter:grayscale(1)}
+.energy{display:flex;gap:6px}
+.energy button{flex:1;min-height:46px;border-radius:12px;background:var(--card2);font-size:13px;font-weight:700}
+.energy button.on{outline:2.5px solid var(--accent);background:color-mix(in srgb,var(--accent) 15%,var(--card))}
+.bars{display:flex;gap:4px;align-items:flex-end;height:70px;margin:12px 0 4px}
+.bars i{flex:1;border-radius:4px 4px 0 0;background:var(--accent);min-height:3px}
+.codebox{font:13px ui-monospace,Menlo,monospace;background:var(--card2);padding:10px;border-radius:10px;word-break:break-all;user-select:all}
+.stepedit input.m{width:70px;flex:none;text-align:center}
+.reviewcard{display:flex;align-items:center;gap:12px;margin:14px 0 4px}
+.chat{display:flex;flex-direction:column;gap:8px;max-height:52vh;overflow:auto;padding:4px 0;margin-top:10px}
+.msg{max-width:85%;padding:10px 13px;border-radius:16px;font-size:15px;line-height:1.4;white-space:pre-wrap}
+.msg.me{align-self:flex-end;background:var(--accent);color:var(--accent-ink);border-bottom-right-radius:5px}
+.msg.ai{align-self:flex-start;background:var(--card);border-bottom-left-radius:5px;box-shadow:var(--shadow)}
+.prov{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.prov button{text-align:left;padding:12px;border-radius:14px;background:var(--card2);border:2px solid transparent}
+.prov button.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,var(--card))}
+.prov b{display:block;margin-bottom:4px}
+.prov small{color:var(--muted);font-size:12px;line-height:1.35;display:block}
+.blk{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.drop{outline:3px dashed var(--accent)!important;outline-offset:3px;border-radius:14px}
+.ghost{position:fixed;z-index:90;pointer-events:none;opacity:.92;transform:scale(.96) rotate(-1deg);box-shadow:0 16px 40px rgba(0,0,0,.25);border-radius:var(--r);max-width:min(560px,88vw)}
+.ghost .badge{position:absolute;top:-14px;right:10px;background:var(--ink);color:var(--bg);font-weight:800;font-size:13px;padding:5px 10px;border-radius:10px;white-space:nowrap}
+body.dragging{overflow:hidden;-webkit-user-select:none;user-select:none}
+.tray{margin:14px 0 4px}
+.tray .chips{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 8px;-webkit-overflow-scrolling:touch}
+.tchip{flex:none;display:flex;align-items:center;gap:6px;padding:8px 12px;border-radius:12px;background:color-mix(in srgb,var(--c) calc(var(--tint)*100%),var(--card));font-weight:600;font-size:14px;max-width:220px;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;cursor:grab}
+.tchip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.toast{position:fixed;left:50%;bottom:calc(var(--tab) + env(safe-area-inset-bottom) + 90px);transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:11px 18px;border-radius:14px;z-index:60;font-weight:600;font-size:15px;opacity:0;transition:opacity .2s;pointer-events:none;max-width:90vw;text-align:center}
+.toast.on{opacity:1}
+.login{max-width:380px;margin:18vh auto 0;padding:0 20px;text-align:center}
+.login .logo{width:84px;height:84px;border-radius:24px;margin:0 auto 14px;display:block}
+.set{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}
+.set:last-child{border:0}
+.set .l{flex:1}
+.set .l small{display:block;color:var(--muted);font-size:13px}
+/* AI thinking glow */
+@property --ga{syntax:'<angle>';inherits:false;initial-value:0deg}
+#aiGlow{position:fixed;inset:0;pointer-events:none;z-index:100;opacity:0;transition:opacity .6s}
+#aiGlow.on{opacity:1}
+#aiGlow i{position:absolute;inset:0;border-radius:inherit;padding:14px;background:conic-gradient(from var(--ga),#73CBA8,#7CB8F0,#B89AE8,#EE8FA6,#F6C453,#73CBA8);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;filter:blur(12px);animation:gturn 6s linear infinite,gbreathe 4s ease-in-out infinite}
+#aiGlow span{position:absolute;top:calc(env(safe-area-inset-top) + 12px);left:50%;transform:translateX(-50%);background:var(--card);box-shadow:var(--shadow);padding:6px 6px 6px 16px;border-radius:999px;font-size:14px;font-weight:700;display:flex;gap:8px;align-items:center;pointer-events:auto;white-space:nowrap}
+#aiGlow i.crisp{padding:3px;filter:blur(1px)}
+#aiGlow em{font-style:normal;font-variant-numeric:tabular-nums}
+#aiGlow button{border:0;border-radius:999px;padding:6px 12px;font:inherit;background:var(--line,#0001);color:inherit;cursor:pointer}
+#aiGlow:not(.on) span{pointer-events:none}
+@keyframes gturn{to{--ga:360deg}}
+@keyframes gbreathe{0%,100%{opacity:.6}50%{opacity:1}}
+@media (prefers-reduced-motion:reduce){#aiGlow i{animation:gbreathe 4s ease-in-out infinite}}
+/* native feel (inside the iPhone and Mac apps) */
+html.native,html.native body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:manipulation}
+html.native input,html.native textarea,html.native .selectable{-webkit-user-select:text;user-select:text}
+html.native button:active,html.native .choice:active,html.native .item:active{transform:scale(.97);transition:transform .08s}
+.swipe-out-l{animation:swl .18s ease-in forwards}.swipe-out-r{animation:swr .18s ease-in forwards}
+.swipe-in-l{animation:swil .2s ease-out}.swipe-in-r{animation:swir .2s ease-out}
+@keyframes swl{to{transform:translateX(-30px);opacity:0}}@keyframes swr{to{transform:translateX(30px);opacity:0}}
+@keyframes swil{from{transform:translateX(30px);opacity:0}}@keyframes swir{from{transform:translateX(-30px);opacity:0}}
+.callbtn{display:flex;align-items:center;justify-content:center;gap:10px;background:color-mix(in srgb,#73CBA8 35%,var(--card));font-weight:700;text-decoration:none;color:var(--ink)}
+.micbtn{width:50px;min-height:50px;border-radius:16px;background:var(--card);box-shadow:var(--shadow);font-size:22px;flex:none}
+.xitem{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--line)}
+.xitem:last-child{border:0}
+.xitem .chk{flex:none}
+/* less friction */
+.toast.act{pointer-events:auto;display:flex;align-items:center;gap:12px}
+.toast.act button{color:var(--bg);font-weight:800;text-decoration:underline;padding:4px 2px}
+.qadd{display:flex;gap:8px;margin:14px 0 0}
+.qadd input{flex:1;min-height:50px;border-radius:16px;background:var(--card);box-shadow:var(--shadow);border:2px solid transparent;padding:12px 14px}
+.qadd input:focus{border-color:var(--accent);outline:none}
+.qadd button{width:50px;min-height:50px;border-radius:16px;background:var(--accent);color:var(--accent-ink);font-size:26px;font-weight:700;flex:none}
+.qhint{font-size:14px;color:var(--accent);margin:6px 4px 0;min-height:0}
+.recent{display:flex;gap:8px;overflow-x:auto;padding:10px 2px 2px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.recent::-webkit-scrollbar{display:none}
+.recent button{flex:none;font-size:14px;font-weight:600;padding:8px 12px;border-radius:999px;background:color-mix(in srgb,var(--c) calc(var(--tint)*100%),var(--card));white-space:nowrap}
+.allday button,.allday span{font-size:14px;font-weight:600;padding:7px 12px;border-radius:12px;background:color-mix(in srgb,var(--c) calc(var(--tint)*100% + 10%),var(--card))}
+.quiet{display:flex;gap:12px;align-items:center;margin-top:12px}
+.quiet .big{font-size:30px}
+.left{margin-top:12px}
+.left ul{margin:6px 0 10px;padding-left:20px}
+.left li{margin:2px 0}
+.isteps{display:flex;flex-direction:column;gap:2px;margin-top:8px}
+.istep{display:flex;align-items:center;gap:8px;text-align:left;font-size:14px;padding:4px 0;min-height:30px;line-height:1.25}
+.istep .bx{width:20px;height:20px;border-radius:6px;border:2px solid color-mix(in srgb,var(--c) 70%,var(--ink));flex:none;display:grid;place-items:center;font-size:12px;font-weight:900}
+.istep.on{opacity:.6;text-decoration:line-through}
+.istep.on .bx{background:var(--c);border-color:var(--c)}
+.istep.on .bx::after{content:"✓";color:#222}
+.from{display:inline-block;font-size:12px;font-weight:700;padding:2px 7px;border-radius:8px;background:color-mix(in srgb,#EE8FA6 30%,var(--card));margin-left:6px;vertical-align:1px}
+.ehint{font-size:14px;color:var(--accent);margin-top:6px}
+.share{border-top:1px solid var(--line);padding-top:12px;margin-top:12px}
+.share:first-child{border:0;margin:0;padding:0}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<nav class="tabs hidden" id="tabs">
+  <button data-v="today"><span>🗓️</span>Today</button>
+  <button data-v="todo"><span>✅</span>To-do</button>
+  <button data-v="focus"><span>⏳</span>Focus</button>
+  <button data-v="routines"><span>🔁</span>Routines</button>
+  <button data-v="me"><span>🙂</span>Me</button>
+</nav>
+<button class="fab hidden" id="fab" aria-label="Add">+</button>
+<div class="scrim" id="scrim"></div>
+<div class="sheet" id="sheet"><div class="grab"></div><div id="sheetBody"></div></div>
+<div class="toast" id="toast"></div>
+
+<script src="ical.min.js"></script>
+<script src="pacely-icons.js"></script>
+<script src="smart.js"></script>
+<script src="local.js"></script>
+<script>
+"use strict";
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const COLORS=['#F6C453','#F4A07A','#F07F6E','#EE8FA6','#B89AE8','#7CB8F0','#73CBA8','#A8C686','#D9B99B','#9AA8BA'];
+const EMOJIS=['📝','✅','⏰','🛏️','🚿','🦷','👕','🥣','☕','🍽️','🥪','🍎','🍳','🧺','🧹','🛒','🚗','🚶','🏃','🧘','📚','💻','📧','📞','🗒️','🎧','🎮','📺','🎨','🔧','🎙️','🎬','👶','🐾','🌳','💤','🛁','📦','💡','🧠','❤️','🎉','💼','🏠','🍼','🎒','💬','🌅'];
+const icon=(n,px)=>window.PacelyIcons?PacelyIcons.icon(n,px):'';
+function emojiIcon(e,px){let raw=false;try{raw=localStorage.getItem('pacely_fx_emoji')==='true'}catch(x){}if(raw||!window.PacelyIcons)return esc(e);return PacelyIcons.emojiIcon(e,px)||esc(e)}
+const MOODS=[1,2,3,4,5].map(n=>`<span class="mood-ic">${window.PacelyIcons?PacelyIcons.icon('mood-'+n,26):['😞','😕','😐','🙂','😄'][n-1]}</span>`);
+const MOODNAMES=['Rough','Low','Okay','Good','Great'];
+const DAYS=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const S={view:'today',mode:'day',date:null,today:null,day:{items:[],moods:[],allday:[]},week:{},month:{},todos:[],routines:[],moods:[],me:null,showDone:false,ai:{ok:false}};
+const IS_NATIVE=!!(window.webkit&&window.webkit.messageHandlers&&window.webkit.messageHandlers.pacely);
+function native(msg){try{if(IS_NATIVE)window.webkit.messageHandlers.pacely.postMessage(msg)}catch(e){}}
+const IS_IOS=IS_NATIVE&&window.PACELY_PLATFORM!=='mac';
+document.querySelectorAll('.tabs button[data-v]').forEach(b=>{const n={today:'today',todo:'todo',focus:'focus',routines:'routines',me:'me'}[b.dataset.v];const sp=b.querySelector('span');if(sp&&window.PacelyIcons&&n)sp.innerHTML=PacelyIcons.icon(n,22)});
+if(IS_NATIVE){document.documentElement.classList.add('native');
+  const vp=document.querySelector('meta[name=viewport]');if(vp)vp.content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover';
+  document.addEventListener('gesturestart',e=>e.preventDefault())}
+/* Sounds: put your own files in the sounds folder (see sounds/README.md). Missing ones fall back to a soft chime or silence. */
+const FX={missing:{}};
+function fxOn(k){try{return JSON.parse(localStorage.getItem('pacely_fx_'+k)??'true')}catch(e){return true}}
+function fxSet(k,v){try{localStorage.setItem('pacely_fx_'+k,JSON.stringify(v))}catch(e){}}
+function sfx(name,fallback){
+  if(!fxOn('sound')){return}
+  const tries=['sounds/'+name+'.mp3','sounds/'+name+'.m4a',name+'.mp3',name+'.m4a'].filter(u=>!FX.missing[u]);
+  const play=i=>{if(i>=tries.length){if(fallback)fallback();return}
+    const a=new Audio(tries[i]);a.volume=.7;a.play().catch(()=>{FX.missing[tries[i]]=1;play(i+1)})};
+  play(0);
+}
+function haptic(style){if(!fxOn('haptic'))return;if(IS_IOS)native({type:'haptic',style:style||'light'});else try{navigator.vibrate&&navigator.vibrate(style==='success'?[10,40,10]:8)}catch(e){}}
+document.addEventListener('click',e=>{if(e.target.closest('button,.choice,a.btn,[data-open]'))haptic('light')},true);
+const ENERGY=['Empty','Low','Okay','Good','Full'];
+const PRIO={now:'Now',soon:'Soon',later:'Later'};
+
+/* ---------- utils ---------- */
+const pad=n=>String(n).padStart(2,'0');
+const iso=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const parse=s=>{const[y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
+const addDays=(s,n)=>{const d=parse(s);d.setDate(d.getDate()+n);return iso(d)};
+const mon=s=>{const d=parse(s);const w=(d.getDay()+6)%7;d.setDate(d.getDate()-w);return iso(d)};
+const toMin=t=>{if(!t)return null;const[h,m]=t.split(':').map(Number);return h*60+m};
+const fmt=m=>`${pad(Math.floor((m%1440+1440)%1440/60))}:${pad(((m%60)+60)%60)}`;
+const nowMin=()=>{const d=new Date();return d.getHours()*60+d.getMinutes()+d.getSeconds()/60};
+const dur=m=>m>=60?(m%60?`${Math.floor(m/60)}h ${m%60}m`:`${m/60}h`):`${m} min`;
+const lsGet=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}};
+const lsSet=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+S.mode=lsGet('mode','day');
+function toast(m,act){const t=$('#toast');t.textContent=m;t.classList.toggle('act',!!act);
+  if(act){const b=document.createElement('button');b.textContent=act.label;b.onclick=()=>{t.classList.remove('on','act');act.fn()};t.appendChild(b)}
+  t.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('on','act'),act?6000:2200)}
+let MODE='server'; // 'server' = a Pacely server, 'local' = everything kept on this device
+async function api(path,opt={}){
+  if(MODE==='local'){
+    try{return await LOCAL.call(opt.method||'GET',path,opt.body)}
+    catch(e){sfx('gentle-error');toast(e.message||'Something went wrong');throw e}
+  }
+  const o={method:opt.method||'GET',headers:{},credentials:'same-origin'};
+  if(opt.body!==undefined){o.headers['Content-Type']='application/json';o.body=JSON.stringify(opt.body)}
+  let r;
+  try{r=await fetch(path,o)}catch(e){toast('Can’t reach Pacely – check your connection');throw e}
+  if(r.status===401){showLogin();throw new Error('login')}
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok){toast(j.error||'Something went wrong');throw new Error(j.error)}
+  if(o.method!=='GET')native({type:'changed'});
+  return j;
+}
+let installEvt=null;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installEvt=e});
+/* AI requests run on the server in the background; this waits for the answer */
+async function aiCall(path,body){glowOn();try{return await aiCall2(path,body)}finally{glowOff()}}
+/* A soft glow that travels round the screen edge while the AI helper thinks (breathes instead with reduced motion). */
+let glowN=0,glowT=null,glowGen=0;
+function glowOn(){glowN++;let g=$('#aiGlow');if(!g){g=document.createElement('div');g.id='aiGlow';g.innerHTML='<i></i><i class="crisp"></i><span>✨ <em>Thinking… 0s</em><button type="button">Cancel</button></span>';document.body.appendChild(g);
+    g.querySelector('button').onclick=()=>{glowGen++;glowN=1;glowOff();toast('Stopped. Nothing was changed.')}}
+  requestAnimationFrame(()=>g.classList.add('on'));const t0=Date.now();clearInterval(glowT);glowT=setInterval(()=>{const s=Math.round((Date.now()-t0)/1000);g.querySelector('em').textContent=(s<20?'Thinking… ':'Still thinking… ')+s+'s'},1000)}
+function glowOff(){glowN=Math.max(0,glowN-1);if(glowN)return;clearInterval(glowT);const g=$('#aiGlow');if(g)g.classList.remove('on')}
+async function aiCall2(path,body){
+  const r=await api(path,{method:'POST',body:body||{}});
+  if(!r.job)return r;
+  const started=Date.now(),gen=glowGen;
+  while(Date.now()-started<10*60*1000){
+    await new Promise(res=>setTimeout(res,2500));
+    if(gen!==glowGen){api('/api/ai/job/'+r.job+'/cancel',{method:'POST',body:{}}).catch(()=>{});throw new Error('cancelled')}
+    let j;try{j=await api('/api/ai/job/'+r.job)}catch(e){continue}
+    if(j.status==='done')return j.result;
+    if(j.status==='error'){toast(j.error||'The AI helper didn’t answer');throw new Error(j.error)}
+  }
+  toast('The AI helper is taking too long. Try a shorter brain dump.');throw new Error('timeout');
+}
+function applyFont(f){if(f==='easy'||f==='dyslexic')document.documentElement.dataset.font=f;else delete document.documentElement.dataset.font;lsSet('font',f||'standard')}
+applyFont(lsGet('font','standard'));
+/* Live sync: a quiet line stays open to the server, and the screen refreshes the moment anything changes
+   (on your phone, your partner's, the AI helper or a calendar). */
+let syncV=-1,liveOn=false;const nap=ms=>new Promise(r=>setTimeout(r,ms));
+async function liveLoop(){
+  if(liveOn||MODE!=='server')return;liveOn=true;
+  while(true){
+    if(document.hidden){await nap(2000);continue}
+    try{const r=await fetch('/api/live?v='+syncV+'&wait=25',{credentials:'same-origin'});if(!r.ok)throw new Error(r.status);
+      const j=await r.json();const was=syncV;syncV=j.v;
+      if(was>=0&&j.v!==was)liveRefresh()}
+    catch(e){await nap(8000)}
+  }
+}
+function liveRefresh(){ // wait while you're typing or dragging, so nothing you're doing gets wiped
+  const ae=document.activeElement;
+  if(DRAG||Date.now()-dragJustEnded<800||(ae&&$('#app').contains(ae)&&/INPUT|TEXTAREA|SELECT/.test(ae.tagName))){setTimeout(liveRefresh,2000);return}
+  refresh()}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&MODE==='server'&&S.me)liveRefresh()});
+function applyTheme(t){if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;else delete document.documentElement.dataset.theme;lsSet('theme',t)}
+applyTheme(lsGet('theme','auto'));
+
+/* ---------- sheet ---------- */
+let sheetClose=null;
+function openSheet(html,onClose){if(!$('#sheet').classList.contains('on'))sfx('open');$('#sheetBody').innerHTML=html;$('#sheet').scrollTop=0;$('#scrim').classList.add('on');$('#sheet').classList.add('on');sheetClose=onClose||null}
+function closeSheet(){if($('#sheet').classList.contains('on'))sfx('close');$('#scrim').classList.remove('on');$('#sheet').classList.remove('on');const f=sheetClose;sheetClose=null;if(f)f()}
+$('#scrim').onclick=closeSheet;
+function choose(title,options){ // options [{label,value,cls}]
+  return new Promise(res=>{
+    openSheet(`<h3>${esc(title)}</h3><div style="display:grid;gap:10px;margin-top:16px">${options.map((o,i)=>`<button class="btn block ${o.cls||''}" data-i="${i}">${esc(o.label)}</button>`).join('')}<button class="btn block" data-i="-1">Cancel</button></div>`,()=>res(null));
+    $('#sheetBody').querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>{const i=+b.dataset.i;sheetClose=null;closeSheet();res(i<0?null:options[i].value)});
+  });
+}
+
+/* ---------- login ---------- */
+function showLogin(){
+  $('#tabs').classList.add('hidden');$('#fab').classList.add('hidden');
+  $('#app').innerHTML=`<div class="login"><img class="logo" src="icon-180.png" alt=""><h1>Pacely</h1><p class="sub">Your calm, private day planner</p>
+  <form id="lf" style="margin-top:24px;display:grid;gap:12px"><input type="password" id="lp" placeholder="Password" autocomplete="current-password">
+  <button class="btn pri block" type="submit">Open</button><p class="sub" id="le"></p></form></div>`;
+  $('#lf').onsubmit=async e=>{e.preventDefault();
+    const r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:$('#lp').value})});
+    if(r.ok)boot();else{const j=await r.json().catch(()=>({}));$('#le').textContent=j.error||'Wrong password'}};
+  setTimeout(()=>$('#lp')&&$('#lp').focus(),100);
+}
+
+/* ---------- boot ---------- */
+async function detectMode(){
+  if(window.PACELY_MODE==='local')return 'local';
+  if(window.PACELY_MODE==='server')return 'server';
+  if(location.protocol==='file:')return 'local';
+  try{const r=await fetch('/api/me',{credentials:'same-origin'});
+    if((r.status===200||r.status===401)&&(r.headers.get('content-type')||'').includes('json'))return 'server'}catch(e){}
+  return 'local';
+}
+async function start(){
+  MODE=await detectMode();
+  if(MODE==='local'){
+    await LOCAL.ready;
+    if(!LOCAL.hasData){showWelcome();return}
+  }
+  boot().catch(e=>{if(e.message!=='login')console.error(e)});
+}
+function showWelcome(){
+  $('#tabs').classList.add('hidden');$('#fab').classList.add('hidden');
+  $('#app').innerHTML=`<div class="login" style="margin-top:12vh"><img class="logo" src="icon-180.png" alt=""><h1>Pacely</h1><p class="sub">A calm, private day planner</p>
+  <div class="card" style="margin-top:22px;text-align:left"><b>🔒 Your plans stay on this device</b><p class="sub" style="margin:6px 0 0">Nothing is sent anywhere. No account, no tracking. Save a copy any time from Me › Backup.</p></div>
+  <div style="display:grid;gap:10px;margin-top:16px"><button class="btn pri block" id="wFresh">Start planning</button>
+  <label class="btn block">Load a saved file…<input type="file" id="wFile" accept=".json,application/json" hidden></label></div>
+  <details style="margin-top:22px;text-align:left"><summary class="sub" style="cursor:pointer">I have a Pacely server</summary>
+  <form id="wSrv" class="row" style="margin-top:10px"><input type="text" id="wAddr" placeholder="plan.yourdomain.com" autocapitalize="off" autocorrect="off"><button class="btn" type="submit" style="flex:none">Go</button></form>
+  <p class="sub" style="margin-top:8px">This opens your own server, where you log in with its password.</p></details></div>`;
+  $('#wFresh').onclick=async()=>{await LOCAL.start(null);boot()};
+  $('#wFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;
+    try{await LOCAL.start(await f.text());toast('Your plans are loaded');boot()}catch(err){toast(err.message||'That file didn’t work')}};
+  $('#wSrv').onsubmit=e=>{e.preventDefault();let a=$('#wAddr').value.trim();if(!a)return;if(!/^https?:\/\//i.test(a))a='https://'+a;location.href=a.replace(/\/+$/,'')+'/'};
+}
+async function boot(){
+  S.me=await api('/api/me');
+  applyTheme(S.me.theme);
+  S.today=S.me.today;if(!S.date)S.date=S.today;
+  $('#tabs').classList.remove('hidden');
+  go(S.view);
+  api('/api/ai/status').then(a=>{S.ai=a}).catch(()=>{});
+  liveLoop();
+  if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+}
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>go(b.dataset.v));
+async function go(v){
+  if(S.view&&S.view!==v)sfx('tab');S.view=v;document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+  $('#fab').classList.toggle('hidden',!(v==='today'||v==='routines'));
+  window.scrollTo(0,0);
+  if(v==='today')await loadDay();
+  else if(v==='todo'){S.todos=await api('/api/todos');renderTodo()}
+  else if(v==='focus'){await adoptServerFocus();renderFocus()}
+  else if(v==='routines'){S.routines=await api('/api/routines');renderRoutines()}
+  else if(v==='me'){S.moods=await api('/api/moods');S.me=await api('/api/me');renderMe()}
+}
+$('#fab').onclick=()=>{if(S.view==='routines')editRoutine(null);else editActivity(null,{date:S.date})};
+
+/* ---------- today ---------- */
+async function loadDay(){
+  const realToday=iso(new Date());
+  if(realToday!==S.today){if(S.date===S.today)S.date=realToday;S.today=realToday}
+  if(S.mode==='month'){
+    const first=parse(S.date);first.setDate(1);let w=mon(iso(first));const weeks=[];
+    for(let i=0;i<6;i++){weeks.push(w);w=addDays(w,7)}
+    const res=await Promise.all(weeks.map(x=>api('/api/week?start='+x)));
+    S.month=Object.assign({},...res);S.monthWeeks=weeks;renderToday();return;
+  }
+  const [day,week,todos]=await Promise.all([api('/api/day?date='+S.date),api('/api/week?start='+mon(S.date)),
+    S.date>=S.today?api('/api/todos').catch(()=>[]):Promise.resolve([])]);
+  S.day=day;S.week=week;S.todos=todos;
+  const feats=(S.me&&S.me.features)||[];
+  if(S.date===S.today&&feats.includes('leftovers')&&lsGet('leftDismiss','')!==S.today){S.left=await api('/api/leftovers').catch(()=>[])}else S.left=[];
+  if(feats.includes('smart')&&Date.now()-(S.recentAt||0)>300000){S.recent=await api('/api/recent').catch(()=>[]);S.recentAt=Date.now()}
+  bindSwipe();renderToday();
+}
+function currentItem(){
+  if(S.date!==S.today)return null;const n=nowMin();
+  return S.day.items.find(i=>i.start&&!i.done&&toMin(i.start)<=n&&n<toMin(i.start)+i.duration)||null;
+}
+function nextItem(){
+  if(S.date!==S.today)return null;const n=nowMin();
+  return S.day.items.filter(i=>i.start&&!i.done&&toMin(i.start)>n).sort((a,b)=>toMin(a.start)-toMin(b.start))[0]||null;
+}
+function ringSVG(frac,color,size=78,stroke=8){
+  const r=(size-stroke)/2,c=2*Math.PI*r;
+  return `<svg width="${size}" height="${size}"><circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="var(--line)" stroke-width="${stroke}"/>
+  <circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="${color}" stroke-width="${stroke}" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${c*(1-Math.max(0,Math.min(1,frac)))}"/></svg>`;
+}
+function segHTML(){return `<div class="seg" role="tablist">${[['day','Day'],['week','Week'],['month','Month']].map(([v,l])=>`<button data-mode="${v}" class="${S.mode===v?'on':''}">${l}</button>`).join('')}</div>`}
+function bindSeg(){document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{S.mode=b.dataset.mode;lsSet('mode',S.mode);loadDay()})}
+function renderToday(){
+  if(S.mode==='week')return renderWeekView();
+  if(S.mode==='month')return renderMonthView();
+  const d=parse(S.date);
+  const isToday=S.date===S.today;
+  const title=isToday?'Today':S.date===addDays(S.today,1)?'Tomorrow':S.date===addDays(S.today,-1)?'Yesterday':d.toLocaleDateString('en-GB',{weekday:'long'});
+  const m0=mon(S.date);
+  let week='<div class="week"><button class="arr" id="wp" aria-label="Previous week">‹</button>';
+  for(let i=0;i<7;i++){const ds=addDays(m0,i),w=S.week[ds]||{n:0,done:0};const f=w.n?w.done/w.n:0;
+    week+=`<button class="d ${ds===S.date?'sel':''} ${ds===S.today?'today':''}" data-d="${ds}">${DAYS[i]}<b>${parse(ds).getDate()}</b><span class="dot"><i style="width:${f*100}%"></i></span></button>`}
+  week+='<button class="arr" id="wn" aria-label="Next week">›</button></div>';
+
+  let nowCard='';
+  const cur=currentItem(),nxt=nextItem();
+  const hasLater=isToday&&S.day.items.some(i=>i.kind!=='cal'&&i.start&&!i.done&&toMin(i.start)+i.duration>nowMin());
+  if(cur){const st=toMin(cur.start),n=nowMin(),left=Math.ceil(st+cur.duration-n);
+    nowCard=`<div class="card now"><div class="ring">${ringSVG((n-st)/cur.duration,cur.color)}<div class="e">${esc(cur.emoji)}</div></div>
+    <div style="flex:1;min-width:0"><div class="t">Now</div><div class="n">${esc(cur.title)}</div><div class="sub">${left} min left · until ${fmt(st+cur.duration)}</div>
+    <div class="row" style="margin-top:10px;flex-wrap:wrap"><button class="btn sm pri" data-focus="${cur.id}">⏳ Focus</button>${cur.kind!=='cal'?`<button class="btn sm" data-done="${cur.id}">✓ Done</button>`:''}${hasLater?'<button class="btn sm" id="lateBtn">🐢 Running late</button>':''}</div></div></div>`}
+  else if(nxt&&isToday){const mins=Math.round(toMin(nxt.start)-nowMin());
+    nowCard=`<div class="card now"><div class="ring">${ringSVG(0,nxt.color)}<div class="e">${esc(nxt.emoji)}</div></div>
+    <div style="flex:1"><div class="t">Next up</div><div class="n">${esc(nxt.title)}</div><div class="sub">at ${nxt.start} · in ${mins>=60?dur(mins):mins+' min'}</div>
+    ${hasLater?'<div class="row" style="margin-top:10px"><button class="btn sm" id="lateBtn">🐢 Running late</button></div>':''}</div></div>`}
+
+  const timed=S.day.items.filter(i=>i.start),anytime=S.day.items.filter(i=>!i.start);
+  let tl='';
+  if(!S.day.items.length){
+    tl=`<div class="empty"><div class="big">🌤️</div><b>Nothing planned${isToday?' yet':''}</b><p>Tap + to add an activity, add a routine, or let the planner turn your thoughts into a plan.</p>
+    <div class="row" style="justify-content:center;flex-wrap:wrap"><button class="btn" id="addRoutine">🔁 Add a routine</button><button class="btn" id="emptyDump">✨ Brain dump</button></div></div>`;
+  }else{
+    let prevEnd=null;const n=nowMin();let nowShown=!isToday;
+    for(const it of timed){
+      const st=toMin(it.start);
+      if(!nowShown&&st>n){tl+=`<div class="nowline" data-at="${Math.ceil(n/5)*5}"><span class="tm">${fmt(Math.floor(n))}</span></div>`;nowShown=true}
+      if(prevEnd!==null&&st-prevEnd>=15)tl+=`<div class="gap" data-at="${prevEnd}">${dur(st-prevEnd)} free</div>`;
+      tl+=itemHTML(it,cur&&cur.id===it.id);
+      prevEnd=Math.max(prevEnd??0,st+it.duration);
+    }
+    if(!nowShown&&timed.length)tl+=`<div class="nowline" data-at="${Math.ceil(n/5)*5}"><span class="tm">${fmt(Math.floor(n))}</span></div>`;
+    tl+=`<h2 id="anyHead" data-any="1">Anytime ${isToday?'today':''}</h2>`;for(const it of anytime)tl+=itemHTML(it,false);
+    if(!anytime.length)tl+=`<p class="sub" id="anyHint" data-any="1" style="margin-top:-4px">Drag an activity here to do it any time ${isToday?'today':'that day'}.</p>`;
+  }
+  const allday=(S.day.allday||[]).length?`<div class="allday">${S.day.allday.map(a=>a.kind==='cal'?`<span style="--c:${esc(a.color)}">${esc(a.emoji)} ${esc(a.title)}</span>`:`<button style="--c:${esc(a.color)}" data-open="${a.id}">${esc(a.emoji)} ${esc(a.title)}${a.added_by?' 💌':''}</button>`).join('')}</div>`:'';
+  const undoneTimed=S.day.items.filter(i=>i.kind!=='cal'&&!i.done);
+  const quiet=S.day.quiet?`<div class="card quiet"><span class="big">${{off:'🌴',sick:'🤒',holiday:'✈️'}[S.day.quiet]||'🌴'}</span><div style="flex:1"><b>${{off:'Day off',sick:'Sick day',holiday:'Holiday'}[S.day.quiet]||'Day off'}: reminders are quiet</b>
+    <div class="sub">${S.day.quiet==='sick'?'Rest up. Nothing here has to happen today.':'Enjoy it. Nothing here has to happen today.'}</div>
+    ${undoneTimed.length?`<button class="btn sm" style="margin-top:10px" id="quietMove">Move ${undoneTimed.length} thing${undoneTimed.length>1?'s':''} to another day</button>`:''}</div></div>`:'';
+  const left=(isToday&&S.left&&S.left.length)?`<div class="card left"><b>🧺 ${S.left.length} thing${S.left.length>1?'s':''} left from before</b>
+    <ul>${S.left.slice(0,4).map(l=>`<li>${esc(l.emoji)} ${esc(l.title)} <span class="sub">· ${esc(parse(l.date).toLocaleDateString('en-GB',{weekday:'short'}))}</span></li>`).join('')}${S.left.length>4?`<li class="sub">and ${S.left.length-4} more</li>`:''}</ul>
+    <div class="row" style="flex-wrap:wrap;gap:8px"><button class="btn sm pri" data-lo="today">Move to today</button><button class="btn sm" data-lo="todo">To-do list</button><button class="btn sm" data-lo="let_go">Let them go</button><button class="btn sm" data-lo="later">Not now</button></div></div>`:'';
+  const canAdd=S.date>=S.today;
+  const recent=(S.recent||[]).filter(r=>!S.day.items.some(i=>i.title.toLowerCase()===r.title.toLowerCase())).slice(0,6);
+  const qadd=canAdd?`<div class="qadd"><input type="text" id="qa" placeholder="Add… e.g. call GP tomorrow 9am" autocomplete="off" enterkeyhint="done" maxlength="200" aria-label="Quick add">${IS_IOS?'<button class="micbtn" id="qaMic" aria-label="Say it">🎙️</button>':''}${(S.me.features||[]).includes('smartevent')?'<button class="micbtn" id="qaAI" aria-label="Find it online and plan it" title="Find it online and plan it">✨</button>':''}<button id="qaGo" aria-label="Add">＋</button></div>
+    <div class="qhint" id="qaHint"></div>
+    ${recent.length?`<div class="recent" aria-label="Add again">${recent.map((r,i)=>`<button style="--c:${esc(r.color)}" data-rc="${i}">${esc(r.emoji)} ${esc(r.title)}</button>`).join('')}</div>`:''}`:'';
+  const evening=isToday&&new Date().getHours()>=18&&!S.day.review&&S.day.items.length;
+  const mood=S.day.moods.length?S.day.moods[S.day.moods.length-1]:null;
+  $('#app').innerHTML=`<div class="wrap">
+    <div class="row"><div><h1>${title}</h1><div class="sub">${d.toLocaleDateString('en-GB',{weekday:isToday?'long':undefined,day:'numeric',month:'long'})}</div></div><div class="sp"></div>
+    ${isToday?`<button class="icon-btn" id="moodBtn" aria-label="Check in">${mood?MOODS[mood.mood-1]:'🫶'}</button>`:`<button class="btn sm" id="toToday">Today</button>`}</div>
+    ${segHTML()}${week}${allday}${quiet}${commuteCard()}${qadd}${left}${nowCard}
+    ${evening?`<div class="card reviewcard"><span style="font-size:30px">🌙</span><div style="flex:1"><b>How did today go?</b><div class="sub">A two-minute look back</div></div><button class="btn sm pri" id="revBtn">Review</button></div>`:''}
+    ${trayHTML()}<div class="tl">${tl}</div></div>`;
+  bindSeg();
+  bindDrag();
+  $('#wp').onclick=()=>{S.date=addDays(S.date,-7);loadDay()};
+  $('#wn').onclick=()=>{S.date=addDays(S.date,7);loadDay()};
+  document.querySelectorAll('.week .d').forEach(b=>b.onclick=()=>{S.date=b.dataset.d;loadDay()});
+  if($('#toToday'))$('#toToday').onclick=()=>{S.date=S.today;loadDay()};
+  if($('#moodBtn'))$('#moodBtn').onclick=moodSheet;
+  if($('#addRoutine'))$('#addRoutine').onclick=()=>go('routines');
+  if($('#emptyDump'))$('#emptyDump').onclick=coPlanner;
+  if($('#lateBtn'))$('#lateBtn').onclick=lateSheet;
+  if($('#revBtn'))$('#revBtn').onclick=reviewSheet;
+  bindItems($('#app'));
+  bindLess(recent,undoneTimed);
+  if($('#qaAI'))$('#qaAI').onclick=()=>{const t=$('#qa').value.trim();$('#qa').value='';$('#qaHint').textContent='';smartEvent(t)};
+  if($('#cmCheck'))$('#cmCheck').onclick=async()=>{try{S.day.commute=await api('/api/commute?refresh=1');toast('Route checked with TfL just now');renderToday()}catch(e){}};
+}
+/* ---------- out and about ---------- */
+function siteName(u){try{return new URL(u).hostname.replace(/^www\./,'')}catch(e){return u}}
+function tripText(it){
+  if(!it.leave&&!it.travel_min)return '';
+  const how=it.travel_by==='transit'?'by train or tube':it.travel_by==='car'?'drive':'';
+  return `${it.leave?'Leave at '+it.leave:''}${it.leave&&it.travel_min?' · ':''}${it.travel_min?dur(it.travel_min)+(how?' '+how:''):''}`;
+}
+function mapsURL(place){return (IS_IOS||/Mac/.test(navigator.platform)?'https://maps.apple.com/?daddr=':'https://www.google.com/maps/dir/?api=1&destination=')+encodeURIComponent(place)}
+function commuteCard(){
+  const cm=S.day.commute;if(!cm||S.date!==S.today)return '';
+  const to=cm.leave?cm:null,back=cm.back&&cm.back.leave?cm.back:null;
+  const c=to&&nowMin()<=toMin(to.leave)+(to.minutes||0)?to:back||to;if(!c)return '';
+  const home=c===back;
+  const bad=(c.status||[]).filter(x=>!x.good);
+  const open=lsGet('commuteOpen',false);
+  return `<details class="card commute" ${open?'open':''} ontoggle="lsSet('commuteOpen',this.open)"><summary style="list-style:none;cursor:pointer" class="row"><span style="font-size:24px">${home?'🏠':'🚇'}</span><div style="flex:1"><b>${home?'Head home at':'Leave for work at'} ${esc(c.leave)}</b>
+  <div class="sub" style="${bad.length?'color:#C98A1B':''}">${bad.length?esc(bad[0].line)+': '+esc(bad[0].status.toLowerCase()):(c.status||[]).length?'Good service':''}</div></div><span class="sub">${open?'▲':'▼'}</span></summary>
+  <div class="row" style="margin-top:8px"><div class="sub" style="flex:1">${c.minutes} min · ${home?'home about':'arrive'} ${esc(c.arrive)}${c.summary?' · '+esc(c.summary):''}</div><button class="btn sm" id="cmCheck">Check now</button></div>
+  ${(c.status||[]).length?`<div class="chips">${c.status.map(x=>`<span class="chip ${x.good?'':'bad'}">${esc(x.line)}: ${esc(x.status)}</span>`).join('')}</div>`:''}
+  ${c.alerted?`<p class="sub" style="margin:8px 0 0"><b>${esc((c.alerted||'').replace(/^(🚇|🏠)\s*/,''))}.</b></p>`:''}
+  ${bad.length&&bad[0].reason?`<details style="margin-top:6px"><summary class="sub">What's happening</summary><p class="sub">${esc(bad[0].reason)}</p></details>`:''}
+  <div class="sub" style="margin-top:6px;font-size:12px">Checked with TfL at ${new Date(c.checked).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}. Pacely checks every 5 minutes and tells you if it changes.</div></details>`;
+}
+async function smartEvent(text,opts={}){
+  if(!text){openSheet(`<h3>✨ Find it and plan it</h3><p class="sub">Type or paste what it is, like “Audley End Christmas event 28 Nov 1pm”. The AI helper looks it up online, finds the website, price and address, and works out when to leave.</p>
+    <textarea id="seT" placeholder="What is it, and when?"></textarea>
+    <div style="display:grid;gap:10px;margin-top:14px"><button class="btn pri block" id="seGo">Find it</button><button class="btn block" id="seX">Cancel</button></div>`);
+    $('#seX').onclick=closeSheet;$('#seGo').onclick=()=>{const t=$('#seT').value.trim();if(t){closeSheet();smartEvent(t,opts)}};setTimeout(()=>$('#seT')&&$('#seT').focus(),300);return}
+  let r;try{r=await aiCall(opts.path||'/api/ai/event',{text})}catch(e){return}
+  if(!r||!r.item)return;eventReview(r,opts);
+}
+function eventReview(r,opts={}){
+  const it=r.item,t=r.trip||{};
+  const when=it.date?parse(it.date).toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'})+(it.start?' at '+it.start:''):'No day yet';
+  openSheet(`<div class="bigemoji" style="--c:${esc(it.color)}">${emojiIcon(it.emoji,44)}</div><h3>${esc(it.title)}</h3><div class="sub">${esc(when)} · about ${dur(it.duration)}</div>
+  <div class="card" style="margin-top:14px">
+    ${it.location?`<div class="trip"><span class="i">📍</span><div>${esc(it.location)}</div></div>`:''}
+    ${it.link?`<div class="trip"><span class="i">🔗</span><div><a href="${esc(it.link)}" target="_blank" rel="noopener">${esc(siteName(it.link))}</a></div></div>`:''}
+    ${it.price?`<div class="trip"><span class="i">🎟️</span><div>${esc(it.price)}</div></div>`:''}
+    ${t.minutes?`<div class="trip"><span class="i">${t.by==='transit'?'🚆':'🚗'}</span><div><b>${t.leave?'Leave at '+esc(t.leave):dur(t.minutes)+' away'}</b><div class="sub">${dur(t.minutes)} ${t.by==='transit'?'by public transport'+(t.transit&&t.transit.summary?' · '+esc(t.transit.summary):''):'drive'+(t.drive&&t.drive.miles?' · '+t.drive.miles+' miles':'')}${t.leave?`, arriving ${t.buffer} min early`:''}</div></div></div>`:t.error?`<div class="trip"><span class="i">🚗</span><div class="sub">${esc(t.error)}</div></div>`:''}
+    ${it.notes?`<div class="trip"><span class="i">📝</span><div style="white-space:pre-wrap">${esc(it.notes)}</div></div>`:''}
+  </div>
+  ${(r.sources||[]).length?`<div class="srcs sub">Found on: ${r.sources.slice(0,3).map(x=>`<a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.title||'link')}</a>`).join(' · ')}</div>`:''}
+  <p class="sub">Check the details before you go. The AI can get things wrong.</p>
+  <div style="display:grid;gap:10px;margin-top:14px"><button class="btn pri block" id="evAdd">Add to ${opts.owner?esc(opts.owner)+'’s':'my'} plan</button>${opts.add?'':'<button class="btn block" id="evEdit">Change something first</button>'}<button class="btn block" id="evX">Cancel</button></div>`);
+  const body={kind:'event',title:it.title,emoji:it.emoji,color:it.color,date:it.date||S.date,start:it.start||null,duration:it.duration,notes:it.notes,
+    location:it.location||'',link:it.link||'',leave:it.leave||null,travel_min:it.travel_min||null,travel_by:it.travel_by||null,remind:it.leave?-1:10,end_alert:0};
+  $('#evX').onclick=closeSheet;
+  $('#evAdd').onclick=async()=>{if(opts.add){await opts.add(body)}else{await api('/api/activities',{method:'POST',body})}
+    closeSheet();haptic('success');sfx('add');toast(`Added ${it.title}`);refresh()};
+  if($('#evEdit'))$('#evEdit').onclick=()=>{closeSheet();setTimeout(()=>editActivity(null,body),250)};
+}
+/* ---------- less friction: quick add, add again, leftovers, quiet days ---------- */
+function smartHint(text){
+  const p=PacelySmart.parse(text,S.today);const bits=[];
+  if(p.date)bits.push(p.date===S.today?'Today':p.date===addDays(S.today,1)?'Tomorrow':parse(p.date).toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'}));
+  if(p.allday)bits.push({off:'day off',sick:'sick day',holiday:'holiday'}[p.allday]||'all day');else if(p.start)bits.push(p.start);
+  if(p.duration)bits.push(dur(p.duration));
+  if(p.repeat)bits.push(p.repeat.type==='daily'?'every day':p.repeat.type==='weekdays'?'weekdays':'every '+p.repeat.days.map(d=>DAYS[d]).join(', '));
+  return {p,hint:bits.length?'✨ '+bits.join(' · '):''};
+}
+async function quickAdd(){
+  const inp=$('#qa');const text=inp.value.trim();if(!text)return editActivity(null,{date:S.date});
+  const {p}=smartHint(text);
+  const body={kind:'event',title:p.title||text,date:p.date||S.date,start:p.start||null,duration:p.duration||30,remind:0,end_alert:1};
+  if(p.allday){body.allday=p.allday;body.start=null}
+  if(p.repeat)body.repeat=p.repeat;
+  const g=PacelySmart.guess(body.title);if(g){body.emoji=g.emoji;body.color=g.color}
+  inp.value='';$('#qaHint').textContent='';
+  const r=await api('/api/activities',{method:'POST',body});
+  const where=body.date===S.date?'':' to '+(body.date===S.today?'today':body.date===addDays(S.today,1)?'tomorrow':parse(body.date).toLocaleDateString('en-GB',{weekday:'long'}));
+  toast(`Added ${body.title}${where}`,{label:'Undo',fn:async()=>{await api(`/api/activities/${r.id}?scope=all`,{method:'DELETE'});sfx('undo');refresh()}});
+  haptic('success');sfx('add');S.recentAt=0;refresh();
+}
+/* Speak instead of typing: the iPhone app listens using Apple's on-device speech recognition. */
+function dictate(cb){if(!IS_IOS){toast('Tap the 🎤 on your keyboard to speak');return}window.pacelyDictated=t=>{if(t&&t.trim())cb(t.trim())};native({type:'dictate'})}
+/* Swipe left or right on the Today screen for the next or previous day, week or month. */
+let swipeBound=false;
+function bindSwipe(){
+  if(swipeBound)return;swipeBound=true;let sx=0,sy=0,st=0,ok=false;
+  document.addEventListener('touchstart',e=>{if(S.view!=='today'||e.touches.length!==1||document.querySelector('#sheet.on'))return ok=false;
+    const t=e.target;ok=!t.closest('input,textarea,.recent,.wstrip,.week-strip,.dragging,[data-stp],.allday');sx=e.touches[0].clientX;sy=e.touches[0].clientY;st=Date.now()},{passive:true});
+  document.addEventListener('touchend',e=>{if(!ok||S.view!=='today'||DRAG)return;ok=false;
+    const dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;
+    if(Math.abs(dx)<70||Math.abs(dy)>Math.abs(dx)*.6||Date.now()-st>700||Date.now()-dragJustEnded<500)return;
+    swipeTo(dx<0?1:-1)},{passive:true});
+}
+function swipeTo(dir){
+  const mode=S.mode||'day';const step=mode==='week'?7:1;
+  if(mode==='month'){const d=parse(S.date);d.setDate(1);d.setMonth(d.getMonth()+dir);S.date=iso(d)}else S.date=addDays(S.date,dir*step);
+  haptic('light');sfx('swipe');const a=$('#app');a.classList.add(dir>0?'swipe-out-l':'swipe-out-r');
+  setTimeout(async()=>{await loadDay();a.classList.remove('swipe-out-l','swipe-out-r');a.classList.add(dir>0?'swipe-in-l':'swipe-in-r');setTimeout(()=>a.classList.remove('swipe-in-l','swipe-in-r'),220)},170);
+}
+function bindLess(recent,undoneTimed){
+  bindSwipe();
+  if($('#qa')){
+    $('#qa').oninput=()=>{$('#qaHint').textContent=smartHint($('#qa').value).hint};
+    $('#qa').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();quickAdd()}};
+    $('#qaGo').onclick=quickAdd;
+    if($('#qaMic'))$('#qaMic').onclick=()=>dictate(t=>{$('#qa').value=t;$('#qaHint').textContent=smartHint(t).hint;$('#qa').focus()});
+  }
+  document.querySelectorAll('[data-rc]').forEach(b=>b.onclick=async()=>{
+    const r=recent[+b.dataset.rc];let start=r.start||null;
+    if(start&&S.date===S.today&&toMin(start)<nowMin())start=null;
+    const res=await api('/api/activities',{method:'POST',body:{kind:'event',title:r.title,emoji:r.emoji,color:r.color,duration:r.duration,steps:r.steps,date:S.date,start,remind:0,end_alert:1}});
+    toast(`Added ${r.title}${start?' at '+start:''}`,{label:'Undo',fn:async()=>{await api('/api/activities/'+res.id,{method:'DELETE'});sfx('undo');refresh()}});refresh()});
+  document.querySelectorAll('[data-lo]').forEach(b=>b.onclick=async()=>{
+    const a=b.dataset.lo;
+    if(a==='later'){lsSet('leftDismiss',S.today);S.left=[];renderToday();return}
+    if(a==='let_go'&&!await choose(`Let ${S.left.length} thing${S.left.length>1?'s':''} go?`,[{label:'Yes, let them go',value:true,cls:'danger'}]))return;
+    await api('/api/leftovers',{method:'POST',body:{action:a,ids:S.left.map(l=>l.id)}});
+    toast(a==='today'?'Moved to today':a==='todo'?'Moved to your to-do list':'Let go. Fresh start ✨');S.left=[];refresh()});
+  if($('#quietMove'))$('#quietMove').onclick=async()=>{
+    const to=await choose('Move them to…',[{label:'Tomorrow',value:addDays(S.date,1)},{label:'The next weekday',value:(()=>{let d=addDays(S.date,1);while([0,6].includes(parse(d).getDay()))d=addDays(d,1);return d})()},{label:'My to-do list',value:'todo'}]);
+    if(!to)return;
+    await api('/api/leftovers',{method:'POST',body:to==='todo'?{action:'todo',ids:undoneTimed.map(i=>i.id)}:{action:'move',to,ids:undoneTimed.map(i=>i.id)}});
+    toast(to==='todo'?'Moved to your to-do list':'Moved. Take it easy 💛');refresh()};
+}
+/* ---------- drag and drop ---------- */
+function trayHTML(){
+  const open=(S.todos||[]).filter(t=>!t.done&&t.kind==='todo');
+  if(!open.length||S.date<S.today)return '';
+  const order={now:0,soon:1,later:2};open.sort((a,b)=>(order[a.priority||'soon']-order[b.priority||'soon']));
+  return `<div class="tray"><div class="sub" style="font-size:13px">Hold and drag a to-do into your day</div>
+  <div class="chips">${open.slice(0,20).map(t=>`<div class="tchip" style="--c:${esc(t.color||'#7CB8F0')}" data-todo="${t.id}">${esc(t.emoji||'📝')} <span>${esc(t.title)}</span></div>`).join('')}</div></div>`;
+}
+function haptic(){try{navigator.vibrate&&navigator.vibrate(15)}catch(e){}native({type:'haptic'})}
+let DRAG=null,dragJustEnded=0;
+function dropTarget(x,y){
+  const el=document.elementFromPoint(x,y);if(!el)return null;
+  const day=el.closest('.week .d');if(day)return{el:day,date:day.dataset.d,label:parse(day.dataset.d).toLocaleDateString('en-GB',{weekday:'short',day:'numeric'})};
+  const blk=el.closest('[data-end]');
+  if(blk&&blk.dataset.open!==String(DRAG.id)){const m=+blk.dataset.end;return{el:blk,start:fmt(m),label:`${fmt(m)} · after ${blk.dataset.title}`}}
+  const at=el.closest('[data-at]');if(at){const m=+at.dataset.at;return{el:at,start:fmt(m),label:fmt(m)}}
+  const any=el.closest('[data-any]');if(any)return{el:any,start:null,label:'Anytime'};
+  if(DRAG.kind==='todo'&&el.closest('.tl,.now,.empty')){const m=Math.ceil(nowMin()/15)*15;const t=S.date===S.today?fmt(m):'09:00';return{el:el.closest('.tl,.now,.empty'),start:t,label:t}}
+  return null;
+}
+function dragStart(src,kind,id,x,y){
+  const r=src.getBoundingClientRect();
+  const g=src.cloneNode(true);g.classList.add('ghost');g.style.width=r.width+'px';g.style.left=r.left+'px';g.style.top=r.top+'px';
+  g.insertAdjacentHTML('beforeend','<div class="badge">Move…</div>');document.body.appendChild(g);
+  DRAG={kind,id,ghost:g,dx:x-r.left,dy:y-r.top,target:null,src};src.style.opacity='.35';
+  document.body.classList.add('dragging');haptic();sfx('pickup');
+}
+function dragMove(x,y){
+  if(!DRAG)return;
+  DRAG.ghost.style.left=(x-DRAG.dx)+'px';DRAG.ghost.style.top=(y-DRAG.dy)+'px';
+  if(y>innerHeight-110)window.scrollBy(0,14);else if(y<90)window.scrollBy(0,-14);
+  const t=dropTarget(x,y);
+  if((t&&t.el)!==(DRAG.target&&DRAG.target.el)){if(DRAG.target)DRAG.target.el.classList.remove('drop');if(t){t.el.classList.add('drop');haptic();sfx('hover')}}
+  DRAG.target=t;DRAG.ghost.querySelector('.badge').textContent=t?'→ '+t.label:'Drop on a time, gap or day';
+}
+async function dragEnd(){
+  if(!DRAG)return;const d=DRAG;DRAG=null;dragJustEnded=Date.now();
+  d.ghost.remove();d.src.style.opacity='';document.body.classList.remove('dragging');
+  if(d.target)d.target.el.classList.remove('drop');
+  const t=d.target;if(!t)return;
+  sfx('drop');
+  try{
+    if(d.kind==='todo'){
+      const todo=S.todos.find(x=>x.id==d.id);
+      await api('/api/activities/'+d.id,{method:'PUT',body:{kind:'event',date:t.date||S.date,start:t.date?(S.date===S.today?fmt(Math.ceil(nowMin()/15)*15):'09:00'):t.start,duration:(todo&&todo.duration)||30}});
+      toast('Planned · '+t.label);
+    }else{
+      const it=findItem(d.id);const body={};
+      if(t.date){if(t.date===(it.date||S.date))return;body.date=t.date}else body.start=t.start;
+      if(it.master_id)body.scope='this';
+      await api('/api/activities/'+d.id,{method:'PUT',body});
+      toast('Moved · '+t.label);
+    }
+  }catch(e){}
+  loadDay();
+}
+function makeDraggable(el,kind,id){
+  let timer=null,sx=0,sy=0,touchActive=false;
+  el.addEventListener('touchstart',e=>{if(e.touches.length!==1)return;const p=e.touches[0];sx=p.clientX;sy=p.clientY;touchActive=true;
+    timer=setTimeout(()=>{timer=null;if(touchActive)dragStart(el,kind,id,sx,sy)},380)},{passive:true});
+  el.addEventListener('touchmove',e=>{const p=e.touches[0];
+    if(DRAG&&DRAG.src===el){e.preventDefault();dragMove(p.clientX,p.clientY);return}
+    if(timer&&(Math.abs(p.clientX-sx)>10||Math.abs(p.clientY-sy)>10)){clearTimeout(timer);timer=null}},{passive:false});
+  const endTouch=()=>{touchActive=false;if(timer){clearTimeout(timer);timer=null}if(DRAG&&DRAG.src===el)dragEnd()};
+  el.addEventListener('touchend',endTouch);el.addEventListener('touchcancel',endTouch);
+  el.addEventListener('contextmenu',e=>{if(DRAG||timer)e.preventDefault()});
+  el.addEventListener('mousedown',e=>{if(e.button!==0||e.target.closest('[data-done]'))return;const x0=e.clientX,y0=e.clientY;let started=false;
+    const mv=ev=>{if(!started&&(Math.abs(ev.clientX-x0)>6||Math.abs(ev.clientY-y0)>6)){started=true;dragStart(el,kind,id,x0,y0)}if(started)dragMove(ev.clientX,ev.clientY)};
+    const up=()=>{document.removeEventListener('mousemove',mv);document.removeEventListener('mouseup',up);if(started)dragEnd()};
+    document.addEventListener('mousemove',mv);document.addEventListener('mouseup',up)});
+}
+function bindDrag(){
+  document.querySelectorAll('[data-drag]').forEach(el=>makeDraggable(el,'item',el.dataset.drag));
+  document.querySelectorAll('[data-todo]').forEach(el=>{makeDraggable(el,'todo',el.dataset.todo);
+    el.addEventListener('click',()=>{if(Date.now()-dragJustEnded<400)return;detail(S.todos.find(t=>t.id==el.dataset.todo))})});
+}
+function renderWeekView(){
+  const m0=mon(S.date);let html='';
+  for(let i=0;i<7;i++){const ds=addDays(m0,i),w=S.week[ds]||{items:[]};const items=(w.items||[]);
+    html+=`<button class="wkday ${ds===S.today?'today':''}" data-d="${ds}"><h4>${DAYS[i]} ${parse(ds).getDate()} <small>${items.length?`${w.done||0}/${w.n||0} done`:'Free day'}</small></h4>
+    ${items.slice(0,8).map(x=>`<div class="wkrow ${x.done?'done':''}" style="--c:${esc(x.color)}"><span class="t">${x.start||(x.allday?'All day':'—')}</span><span class="s"></span><span>${esc(x.emoji)} ${esc(x.title)}</span></div>`).join('')}
+    ${items.length>8?`<div class="sub">+${items.length-8} more</div>`:''}</button>`}
+  const end=parse(addDays(m0,6));
+  $('#app').innerHTML=`<div class="wrap"><div class="row"><div><h1>Week</h1><div class="sub">${parse(m0).toLocaleDateString('en-GB',{day:'numeric',month:'short'})} – ${end.toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</div></div><div class="sp"></div>
+  <button class="icon-btn" id="wp" aria-label="Previous week">‹</button><button class="icon-btn" id="wn" aria-label="Next week">›</button></div>${segHTML()}<div class="wk">${html}</div></div>`;
+  bindSeg();
+  $('#wp').onclick=()=>{S.date=addDays(S.date,-7);loadDay()};$('#wn').onclick=()=>{S.date=addDays(S.date,7);loadDay()};
+  document.querySelectorAll('.wkday').forEach(b=>b.onclick=()=>{S.date=b.dataset.d;S.mode='day';lsSet('mode','day');loadDay()});
+}
+function renderMonthView(){
+  const cur=parse(S.date);const month=cur.getMonth();let cells='';
+  for(const w of S.monthWeeks){for(let i=0;i<7;i++){const ds=addDays(w,i),dd=parse(ds),info=S.month[ds]||{items:[]};
+    cells+=`<button data-d="${ds}" class="${dd.getMonth()!==month?'out':''} ${ds===S.today?'today':''} ${ds===S.date?'sel':''}">${dd.getDate()}<span class="dots">${(info.items||[]).slice(0,6).map(x=>`<i style="--c:${esc(x.color)}"></i>`).join('')}</span></button>`}}
+  $('#app').innerHTML=`<div class="wrap"><div class="row"><div><h1>${cur.toLocaleDateString('en-GB',{month:'long'})}</h1><div class="sub">${cur.getFullYear()}</div></div><div class="sp"></div>
+  <button class="icon-btn" id="mp" aria-label="Previous month">‹</button><button class="icon-btn" id="mn" aria-label="Next month">›</button></div>${segHTML()}
+  <div class="mon">${DAYS.map(d=>`<div class="h">${d[0]}</div>`).join('')}${cells}</div></div>`;
+  bindSeg();
+  const shiftMonth=n=>{const d=parse(S.date);d.setDate(1);d.setMonth(d.getMonth()+n);S.date=iso(d);loadDay()};
+  $('#mp').onclick=()=>shiftMonth(-1);$('#mn').onclick=()=>shiftMonth(1);
+  document.querySelectorAll('.mon button').forEach(b=>b.onclick=()=>{S.date=b.dataset.d;S.mode='day';lsSet('mode','day');loadDay()});
+}
+function lateSheet(){
+  openSheet(`<h3>Running late?</h3><p class="sub">That’s fine. Push everything still to come today back by:</p>
+  <div class="choices" style="margin-top:14px">${[5,10,15,30,45,60].map(m=>`<button class="choice" data-sh="${m}">${dur(m)}</button>`).join('')}</div>
+  <p class="sub" style="margin-top:16px">Calendar events from other apps stay where they are.</p>`);
+  $('#sheetBody').querySelectorAll('[data-sh]').forEach(b=>b.onclick=async()=>{const r=await api('/api/shift',{method:'POST',body:{date:S.today,minutes:+b.dataset.sh}});closeSheet();toast(`Moved ${r.moved} activit${r.moved===1?'y':'ies'} back ${b.dataset.sh} min`);loadDay()});
+}
+function itemHTML(it,isCur){
+  const st=toMin(it.start);const steps=it.steps||[];const sd=steps.filter(s=>s.d).length;
+  const h=it.start?Math.min(200,Math.max(0,(it.duration-30)*0.9)):0;
+  const meta=[it.start?`${it.start}–${fmt(st+it.duration)}`:dur(it.duration),it.start?dur(it.duration):'',steps.length?`${sd}/${steps.length} steps`:'',it.master_id?'🔁':'',it.kind==='cal'?esc(it.calendar||'Calendar'):'',it.leave&&!it.done?'🚶 leave '+esc(it.leave):''].filter(Boolean).join(' · ');
+  return `<div class="item"><div class="tm">${it.start||''}</div>
+  <div class="blk ${it.done?'done':''} ${isCur?'cur':''}" style="--c:${esc(it.color)};min-height:${66+h}px" data-open="${it.id}" ${it.start?`data-end="${st+it.duration}" data-title="${esc(it.title)}"`:''} ${it.kind!=='cal'?`data-drag="${it.id}"`:''} role="button" tabindex="0">
+    <div class="em">${emojiIcon(it.emoji)}</div><div style="min-width:0;flex:1"><div class="ti">${esc(it.title)}${isCur?'<span class="pill">Now</span>':''}${it.added_by?`<span class="from">💌 ${esc(it.added_by)}</span>`:''}</div><div class="me">${meta}</div>
+    ${steps.length?`<div class="isteps">${steps.slice(0,8).map((s,i)=>`<button class="istep ${s.d?'on':''}" data-stp="${it.id}:${i}"><span class="bx"></span><span>${esc(s.t)}${s.m?` <small class="muted">· ${s.m} min</small>`:''}</span></button>`).join('')}${steps.length>8?`<div class="me">+${steps.length-8} more steps</div>`:''}</div>`:''}</div>
+    ${it.kind==='cal'?'':`<button class="chk ${it.done?'on':''}" data-done="${it.id}" aria-label="Done">✓</button>`}</div></div>`;
+}
+function findItem(id){return S.day.items.find(i=>i.id==id)||(S.day.allday||[]).find(i=>i.id==id)||S.todos.find(i=>i.id==id)}
+function bindItems(root){
+  root.querySelectorAll('[data-open]').forEach(b=>b.onclick=e=>{if(e.target.closest('[data-done]')||e.target.closest('[data-stp]')||Date.now()-dragJustEnded<400)return;detail(findItem(b.dataset.open))});
+  root.querySelectorAll('[data-stp]').forEach(b=>b.onclick=async e=>{e.stopPropagation();
+    const [id,i]=b.dataset.stp.split(':');const it=findItem(id);if(!it)return;const steps=(it.steps||[]).map(x=>({...x}));
+    steps[+i].d=!steps[+i].d;it.steps=steps;b.classList.toggle('on',steps[+i].d);if(steps[+i].d){haptic('soft');sfx('step')}
+    await api('/api/activities/'+it.id,{method:'PUT',body:{steps,...(it.master_id?{scope:'this'}:{})}});
+    if(steps.every(x=>x.d)&&!it.done)toast('All steps done 🎉',{label:'Tick it off',fn:()=>toggleDone(it)});
+    else refresh()});
+  root.querySelectorAll('[data-done]').forEach(b=>b.onclick=async e=>{e.stopPropagation();const it=findItem(b.dataset.done);await toggleDone(it)});
+  root.querySelectorAll('[data-focus]').forEach(b=>b.onclick=()=>startFocusFor(findItem(b.dataset.focus)));
+}
+async function toggleDone(it){
+  await api('/api/activities/'+it.id,{method:'PUT',body:{done:!it.done}});
+  if(!it.done){toast(['Nice one ✨','Done! 🎉','Ticked off 👏','Well done 🌟'][Math.floor(Math.random()*4)]);haptic('success');sfx('done')}
+  refresh();
+}
+function refresh(){if(S.view==='today')loadDay();else if(S.view==='todo')go('todo');else if(S.view==='focus')renderFocus()}
+
+function calDetail(it){
+  const st=toMin(it.start);
+  openSheet(`<div class="bigemoji" style="--c:${esc(it.color)}">${emojiIcon(it.emoji,44)}</div><h3>${esc(it.title)}</h3>
+  <div class="sub">${it.start?`${it.start} – ${fmt(st+it.duration)} · ${dur(it.duration)}`:'All day'} · from ${esc(it.calendar||'your calendar')}</div>
+  ${it.notes?`<div class="card" style="margin-top:14px">📍 ${esc(it.notes)}</div>`:''}
+  <p class="sub" style="margin-top:14px">This comes from a linked calendar, so change it in that calendar.</p>
+  <div style="display:grid;gap:10px;margin-top:16px"><button class="btn pri block" id="cFocus">⏳ Start focus timer</button><button class="btn block" id="cCopy">＋ Copy into Pacely (add steps and reminders)</button></div>`);
+  $('#cFocus').onclick=()=>{sheetClose=null;closeSheet();startFocusFor(it)};
+  $('#cCopy').onclick=()=>{sheetClose=null;closeSheet();setTimeout(()=>editActivity(null,{title:it.title,emoji:it.emoji,color:it.color,date:it.date,start:it.start||'',duration:it.duration,notes:it.notes}),260)};
+}
+function detail(it){
+  if(!it)return;if(it.kind==='cal')return calDetail(it);const steps=it.steps||[];const st=toMin(it.start);
+  openSheet(`<div class="bigemoji" style="--c:${esc(it.color)}">${emojiIcon(it.emoji,44)}</div><h3>${esc(it.title)}</h3>
+  <div class="sub">${it.kind==='todo'?'To-do':it.allday?`All day${{off:' · day off, reminders quiet',sick:' · sick day, reminders quiet',holiday:' · holiday, reminders quiet'}[it.allday]||''}`:it.start?`${it.start} – ${fmt(st+it.duration)} · ${dur(it.duration)}`:`Anytime · ${dur(it.duration)}`}${it.master_id?' · repeats':''}${it.added_by?` · 💌 added by ${esc(it.added_by)}`:''}</div>
+  ${steps.length?`<h2>Steps</h2><div class="card steps" style="padding:4px 14px">${steps.map((s,i)=>`<div class="st ${s.d?'on':''}"><span>${esc(s.t)}${s.m?` <small class="muted">· ${s.m} min</small>`:''}</span><button class="chk ${s.d?'on':''}" data-step="${i}">✓</button></div>`).join('')}</div>`:''}
+  ${it.location||it.link||it.leave?`<h2>Getting there</h2><div class="card">
+    ${it.leave||it.travel_min?`<div class="trip"><span class="i">${it.travel_by==='transit'?'🚆':'🚗'}</span><div><b>${esc(tripText(it))}</b></div></div>`:''}
+    ${it.location?`<div class="trip"><span class="i">📍</span><div>${esc(it.location)}<div><a href="${mapsURL(it.location)}" target="_blank" rel="noopener">Directions</a></div></div></div>`:''}
+    ${it.link?`<div class="trip"><span class="i">🔗</span><div><a href="${esc(it.link)}" target="_blank" rel="noopener">${esc(siteName(it.link))}</a></div></div>`:''}</div>`:''}
+  ${it.notes?`<h2>Notes</h2><div class="card selectable" style="white-space:pre-wrap">${linkPhones(esc(it.notes))}</div>`:''}
+  <div style="display:grid;gap:10px;margin-top:20px">
+    ${callHTML(it)}
+    <button class="btn pri block" id="dDone">${it.done?'↺ Mark not done':'✓ Mark done'}</button>
+    ${!it.done&&it.kind==='event'&&!it.allday?`<button class="btn block" id="dCouldnt">🌧️ Couldn't do it today</button>`:''}
+    ${it.allday?'':it.kind==='event'?`<button class="btn block" id="dFocus">⏳ Start focus timer</button>`:`<button class="btn block" id="dPlan">🗓️ Plan for a day</button>`}
+    ${it.kind==='event'&&!it.done?`<div class="move">${it.start?'<button data-mv="-15">−15 min</button><button data-mv="15">+15 min</button>':''}<button data-mv="tomorrow">Tomorrow</button><button data-mv="todo">To-do list</button></div>`:''}
+    <div class="row"><button class="btn" style="flex:1" id="dEdit">✏️ Edit</button><button class="btn danger" style="flex:1" id="dDel">🗑️ Delete</button></div>
+  </div>`);
+  $('#sheetBody').querySelectorAll('[data-step]').forEach(b=>b.onclick=async()=>{
+    const i=+b.dataset.step;steps[i].d=!steps[i].d;
+    b.classList.toggle('on',steps[i].d);b.parentElement.classList.toggle('on',steps[i].d);
+    await api('/api/activities/'+it.id,{method:'PUT',body:{steps}});
+    if(steps[i].d){haptic('soft');sfx('step')}
+    if(steps.every(s=>s.d)&&!it.done){toast('All steps done 🎉',{label:'Tick it off',fn:()=>{closeSheet();toggleDone(it)}})}
+    sheetClose=refresh;
+  });
+  $('#dDone').onclick=async()=>{sheetClose=null;closeSheet();await toggleDone(it)};
+  if($('#dCouldnt'))$('#dCouldnt').onclick=()=>{sheetClose=null;couldnt(it)};
+  bindCall(it);
+  $('#sheetBody').querySelectorAll('[data-mv]').forEach(b=>b.onclick=async()=>{
+    const v=b.dataset.mv;let body;
+    if(v==='tomorrow')body={date:addDays(it.date||S.date,1)};
+    else if(v==='todo')body={kind:'todo',date:null,start:null};
+    else body={start:fmt(Math.max(0,Math.min(1439,toMin(it.start)+(+v))))};
+    if(it.master_id)body.scope='this';
+    await api('/api/activities/'+it.id,{method:'PUT',body});sheetClose=null;closeSheet();
+    toast(v==='tomorrow'?'Moved to tomorrow':v==='todo'?'Moved to your to-do list':`Moved to ${body.start}`);refresh()});
+  if($('#dFocus'))$('#dFocus').onclick=()=>{sheetClose=null;closeSheet();startFocusFor(it)};
+  if($('#dPlan'))$('#dPlan').onclick=()=>{sheetClose=null;closeSheet();editActivity(it,{kind:'event',date:S.today,plan:true})};
+  $('#dEdit').onclick=()=>{sheetClose=null;closeSheet();setTimeout(()=>editActivity(it),260)};
+  $('#dDel').onclick=async()=>{sheetClose=null;closeSheet();
+    let scope='this';
+    if(it.master_id){scope=await choose('Delete repeating activity',[{label:'Just this one',value:'this'},{label:'This and all future ones',value:'all',cls:'danger'}]);if(!scope)return}
+    else if(!await choose('Delete “'+it.title+'”?',[{label:'Delete',value:true,cls:'danger'}]))return;
+    await api(`/api/activities/${it.id}?scope=${scope}`,{method:'DELETE'});sfx('delete');toast('Deleted');refresh()};
+}
+
+/* Things don't always go to plan. Move what's left without it ever looking like a failure. */
+async function couldnt(it){
+  const steps=(it.steps||[]);const left=steps.filter(s=>!s.d),doneSteps=steps.filter(s=>s.d);
+  const partial=doneSteps.length>0&&left.length>0;
+  const nextWd=(()=>{let d=addDays(S.today,1);while([0,6].includes(parse(d).getDay()))d=addDays(d,1);return d})();
+  const to=await choose(partial?`That's okay. You did ${doneSteps.length} of ${steps.length} steps. Where should the ${left.length===1?'last step':left.length+' steps left'} go?`:`That's okay. It happens. Where should it go?`,
+    [{label:'Tomorrow',value:addDays(S.today,1)},...(nextWd!==addDays(S.today,1)?[{label:'Next weekday ('+parse(nextWd).toLocaleDateString('en-GB',{weekday:'short'})+')',value:nextWd}]:[]),
+     {label:'Pick a day…',value:'pick'},{label:'My to-do list',value:'todo'},{label:'Let it go',value:'let_go'}]);
+  if(!to)return;
+  let date=to;
+  if(to==='pick'){date=await pickDate(addDays(S.today,1));if(!date)return}
+  if(partial){
+    // keep what got done today, and carry just the unfinished steps on
+    if(to!=='let_go'){const body={title:it.title,emoji:it.emoji,color:it.color,duration:Math.max(10,left.reduce((a,s)=>a+(s.m||0),0)||it.duration),
+      steps:left.map(s=>({...s,d:false})),notes:it.notes||'',remind:it.remind||0,end_alert:it.end_alert??1};
+      Object.assign(body,to==='todo'?{kind:'todo',priority:'soon'}:{kind:'event',date,start:null});
+      await api('/api/activities',{method:'POST',body})}
+    await api('/api/activities/'+it.id,{method:'PUT',body:{steps:doneSteps,done:true,...(it.master_id?{scope:'this'}:{})}});
+  }else if(to==='let_go'){await api('/api/activities/'+it.id+'?scope=this',{method:'DELETE'})}
+  else if(to==='todo'){await api('/api/activities/'+it.id,{method:'PUT',body:{kind:'todo',date:null,start:null,...(it.master_id?{scope:'this'}:{})}})}
+  else{await api('/api/activities/'+it.id,{method:'PUT',body:{date,...(it.master_id?{scope:'this'}:{})}})}
+  closeSheet();
+  toast(to==='let_go'?'Let go. That\'s fine 💛':to==='todo'?'On your to-do list for when you\'re ready':`Moved to ${parse(date).toLocaleDateString('en-GB',{weekday:'long'})}. Be kind to yourself 💛`);
+  refresh();
+}
+function pickDate(def){return new Promise(res=>{openSheet(`<h3>Pick a day</h3><input type="date" id="pdIn" value="${def}" min="${S.today}">
+  <div style="display:grid;gap:10px;margin-top:16px"><button class="btn pri block" id="pdOk">Move it here</button><button class="btn block" id="pdNo">Cancel</button></div>`);
+  $('#pdOk').onclick=()=>{const v=$('#pdIn').value;closeSheet();res(v||null)};$('#pdNo').onclick=()=>{closeSheet();res(null)}})}
+
+/* Call buttons: save numbers once in Me, then "Call doctors" shows a big call button. */
+function numbers(){return (S.me&&S.me.numbers)||[]}
+function numberFor(title){const t=' '+String(title||'').toLowerCase()+' ';
+  return numbers().find(n=>String(n.words||n.label||'').toLowerCase().split(/[,|]/).map(w=>w.trim()).filter(Boolean).some(w=>t.includes(w)))}
+const CALLISH=/\b(call|ring|phone|doctor|doctors|gp|surgery|dentist|hmrc|council|bank|nursery|school|pharmacy|chemist|vet|hospital)\b/i;
+function linkPhones(html){return html.replace(/(\+?\d[\d\s-]{8,}\d)/g,m=>`<a href="tel:${m.replace(/[^\d+]/g,'')}">${m}</a>`)}
+function callHTML(it){
+  if(it.kind==='cal')return '';const n=numberFor(it.title);
+  if(n)return `<a class="btn block callbtn" href="tel:${esc(String(n.number).replace(/[^\d+]/g,''))}">📞 Call ${esc(n.label)}</a>`;
+  if(CALLISH.test(it.title)&&/\b(call|ring|phone)\b/i.test(it.title))return `<div class="row" style="gap:8px"><button class="btn" style="flex:1" id="dFind">🔎 Find the number</button><button class="btn" style="flex:1" id="dSaveNum">＋ Save a number</button></div>`;
+  return '';
+}
+function bindCall(it){
+  if($('#dFind'))$('#dFind').onclick=()=>{const q=it.title.replace(/\b(call|ring|phone|about|the|re)\b/gi,' ').replace(/\s+/g,' ').trim()||it.title;
+    const url='https://www.google.com/search?q='+encodeURIComponent(q+' phone number near me');IS_NATIVE?native({type:'open',url}):window.open(url,'_blank')};
+  if($('#dSaveNum'))$('#dSaveNum').onclick=()=>{closeSheet();setTimeout(()=>numberSheet(null,it.title),260)};
+}
+function numberSheet(n,fromTitle){
+  const guessLabel=fromTitle?fromTitle.replace(/\b(call|ring|phone)\b/gi,'').replace(/\?/g,'').trim():'';
+  openSheet(`<h3>${n?'Edit number':'Save a number'}</h3>
+  <label class="f">Who is it?</label><input type="text" id="nLab" value="${esc(n?n.label:guessLabel.charAt(0).toUpperCase()+guessLabel.slice(1))}" placeholder="e.g. GP surgery" maxlength="40">
+  <label class="f">Number</label><input type="tel" id="nNum" value="${esc(n?n.number:'')}" placeholder="e.g. 01234 567890" maxlength="30">
+  <label class="f">Show the call button when the activity mentions</label><input type="text" id="nWords" value="${esc(n?n.words:(guessLabel||'').toLowerCase())}" placeholder="e.g. doctor, doctors, gp" maxlength="200">
+  <p class="sub" style="margin-top:6px">Separate words with commas.</p>
+  <div style="display:grid;gap:10px;margin-top:16px"><button class="btn pri block" id="nSave">Save</button>${n?'<button class="btn danger block" id="nDel">Remove</button>':''}<button class="btn block" id="nNo">Cancel</button></div>`);
+  const save=async list=>{await api('/api/settings',{method:'PUT',body:{numbers:list}});S.me=await api('/api/me');closeSheet();if(S.view==='me')renderMe()};
+  $('#nSave').onclick=()=>{const lab=$('#nLab').value.trim(),num=$('#nNum').value.trim();if(!lab||!num){toast('Add a name and a number');return}
+    const list=numbers().filter(x=>x!==n);list.push({label:lab,number:num,words:$('#nWords').value.trim()||lab.toLowerCase()});save(list);toast('Saved 📞')};
+  if($('#nDel'))$('#nDel').onclick=()=>save(numbers().filter(x=>x!==n));$('#nNo').onclick=closeSheet;
+}
+
+/* ---------- editor ---------- */
+function editActivity(it,pre={}){
+  const isNew=!it||pre.plan;
+  const a=Object.assign({kind:'event',title:'',emoji:'📝',color:COLORS[5],date:S.date,start:'',duration:30,notes:'',steps:[],repeat:{type:'none',days:[]},remind:0,end_alert:1,allday:''},it||{},pre);
+  let picked=!!it&&!pre.plan||a.emoji!=='📝';const touched={};
+  if(pre.plan&&!a.start){const n=Math.ceil(nowMin()/15)*15;a.start=fmt(n)}
+  if(isNew&&!it&&a.kind==='event'&&!a.start&&a.date===S.today){a.start=fmt(Math.ceil(nowMin()/15)*15)}
+  else if(isNew&&!it&&a.kind==='event'&&!a.start){a.start='09:00'}
+  a.steps=(a.steps||[]).map(s=>({...s}));a.repeat=Object.assign({type:'none',days:[]},a.repeat||{});
+  const origRepeat=JSON.stringify(it?it.repeat:null);
+  const durs=[5,10,15,20,30,45,60,90,120];
+  const recent=!it&&a.kind==='event'?(S.recent||[]).slice(0,8):[];
+  function html(){return `<h3>${it&&!pre.plan?'Edit':pre.plan?'Plan it':'New'} ${a.kind==='todo'?'to-do':'activity'}</h3>
+  ${recent.length&&!a.title?`<div class="recent" style="padding-top:0">${recent.map((r,i)=>`<button style="--c:${esc(r.color)}" data-rcp="${i}">${esc(r.emoji)} ${esc(r.title)}</button>`).join('')}</div>`:''}
+  <label class="f">What</label><div class="row"><button class="icon-btn" id="eEm" style="flex:none;font-size:24px;background:${esc(a.color)}">${esc(a.emoji)}</button><input type="text" id="eTitle" value="${esc(a.title)}" placeholder="${it?'e.g. Hoover the lounge':'e.g. Pick up meds tomorrow 11am'}" maxlength="200"></div>${!it?'<div class="ehint" id="eHint"></div>':''}
+  <div id="emPick" class="hidden" style="margin-top:10px"><div class="emojis">${EMOJIS.map(e=>`<button data-em="${e}" class="${e===a.emoji?'on':''}">${e}</button>`).join('')}</div>
+  <input type="text" id="eEmT" placeholder="Or type any emoji" maxlength="8" style="margin-top:8px"></div>
+  <label class="f">Colour</label><div class="swatches">${COLORS.map(c=>`<button data-col="${c}" style="--c:${c}" class="${c===a.color?'on':''}" aria-label="colour"></button>`).join('')}
+  <label style="width:38px;height:38px;border-radius:50%;background:conic-gradient(red,yellow,lime,cyan,blue,magenta,red);display:grid;place-items:center;cursor:pointer;${COLORS.includes(a.color)?'':'outline:3px solid var(--ink);outline-offset:2px'}" aria-label="Any colour"><input type="color" id="eColC" value="${esc(a.color)}" style="opacity:0;width:1px;height:1px"></label></div>
+  ${a.kind==='todo'?`<label class="f">Priority</label><div class="choices">${Object.entries(PRIO).map(([v,l])=>`<button class="choice ${(a.priority||'soon')===v?'on':''}" data-pr="${v}">${l}</button>`).join('')}</div>`:''}
+  ${a.kind==='event'?`
+  <label class="f">When</label><div class="choices">${[['time','At a time'],['any','Anytime that day'],['allday','All day']].map(([v,l])=>`<button class="choice ${(a.allday?'allday':a.start?'time':'any')===v?'on':''}" data-when="${v}">${l}</button>`).join('')}</div>
+  <div class="row" style="gap:10px"><div style="flex:1"><label class="f">Day</label><input type="date" id="eDate" value="${a.date||S.date}"></div>
+  ${a.allday?'':`<div style="flex:1"><label class="f">Start</label><input type="time" id="eStart" value="${a.start||''}" ${a.start?'':'disabled style="opacity:.45"'}></div>`}</div>
+  ${a.allday?`<label class="f">What kind of day</label><div class="choices">${[['day','Just a note'],['office','In the office'],['home','Working from home'],['off','Day off'],['sick','Sick day'],['holiday','Holiday']].map(([v,l])=>`<button class="choice ${a.allday===v?'on':''}" data-adt="${v}">${l}</button>`).join('')}</div>
+  <p class="sub" style="margin-top:8px">${['day','office','home'].includes(a.allday)?'Shows across the top of the day. Set it to repeat for regular days, like office days.':'Shows across the top of the day, and reminders stay quiet that day.'}</p>`:''}
+  <div class="${a.allday?'hidden':''}"><label class="f">How long</label><div class="choices" id="eDur">${durs.map(m=>`<button class="choice ${a.duration==m?'on':''}" data-dur="${m}">${dur(m)}</button>`).join('')}
+  <input type="number" id="eDurC" min="1" max="1440" placeholder="min" style="width:90px;min-height:40px" value="${durs.includes(a.duration)?'':a.duration}"></div></div>
+  <label class="f">Repeat</label><div class="choices" id="eRep">${[['none','Never'],['daily','Every day'],['weekdays','Weekdays'],['days','Pick days']].map(([v,l])=>`<button class="choice ${a.repeat.type===v?'on':''}" data-rep="${v}">${l}</button>`).join('')}</div>
+  <div class="choices ${a.repeat.type==='days'?'':'hidden'}" id="eDays" style="margin-top:8px">${DAYS.map((d,i)=>`<button class="choice ${a.repeat.days.includes(i)?'on':''}" data-day="${i}">${d}</button>`).join('')}</div>
+  <div class="${a.allday?'hidden':''}"><label class="f">Remind me</label><div class="choices" id="eRem">${[[-1,'Off'],[0,'At start'],[5,'5 min before'],[10,'10 min'],[15,'15 min'],[30,'30 min']].map(([v,l])=>`<button class="choice ${a.remind==v?'on':''}" data-rem="${v}">${l}</button>`).join('')}</div>
+  <div class="row" style="margin-top:8px"><button class="choice ${a.end_alert?'on':''}" id="eEnd">🔔 Warn me 5 min before it ends</button></div>
+  <div class="row" style="margin-top:8px"><button class="choice ${a.nag?'on':''}" id="eNag">Keep nudging me until it's done</button></div></div>`:''}
+  <div class="row" style="margin:14px 0 6px"><label class="f" style="margin:0;flex:1">Steps <span style="text-transform:none;font-weight:500">(minutes are optional)</span></label>${S.ai.ok?'<button class="btn sm" id="eAI">✨ Break it down</button>':''}</div>
+  <div id="eSteps">${a.steps.map((s,i)=>`<div class="stepedit"><input type="text" value="${esc(s.t)}" data-si="${i}"><input type="number" class="m" min="1" max="600" placeholder="min" value="${s.m||''}" data-sm="${i}"><button data-sd="${i}" aria-label="Remove">✕</button></div>`).join('')}</div>
+  <div class="stepedit"><input type="text" id="eNewStep" placeholder="Add a step, press return"><button id="eAddStep" aria-label="Add">＋</button></div>
+  ${a.kind==='event'&&!a.allday?`<label class="f">Where (optional)</label><input type="text" id="eLoc" value="${esc(a.location||'')}" placeholder="A place or postcode" maxlength="200">
+  ${(S.me.features||[]).includes('travel')?`<div class="row" style="margin-top:8px;align-items:center"><button class="btn sm" id="eTrip">🚗 When should I leave?</button><span class="sub" id="eTripT" style="flex:1">${esc(tripText(a))}</span></div>`:''}
+  <label class="f">Website (optional)</label><input type="url" id="eLink" value="${esc(a.link||'')}" placeholder="https://" maxlength="400">`:''}
+  <label class="f">Notes</label><textarea id="eNotes" placeholder="Anything helpful to remember">${esc(a.notes)}</textarea>
+  ${a.kind==='event'&&(S.me.features||[]).includes('share')?`<div class="row" style="margin-top:10px"><button class="choice ${a.private?'on':''}" id="ePriv">${icon('lock')} Private: family never sees it</button></div>`:''}
+  <div style="display:grid;gap:10px;margin-top:20px"><button class="btn pri block" id="eSave">${isNew?'Add':'Save'}</button><button class="btn block" id="eCancel">Cancel</button></div>`}
+  function grab(){
+    a.title=$('#eTitle').value;a.notes=$('#eNotes').value;
+    if($('#eLoc')){if(($('#eLoc').value||'')!==(a.location||'')){a.leave=null;a.travel_min=null}a.location=$('#eLoc').value.trim();a.link=$('#eLink').value.trim()}
+    document.querySelectorAll('[data-si]').forEach(inp=>a.steps[+inp.dataset.si].t=inp.value);
+    document.querySelectorAll('[data-sm]').forEach(inp=>{const v=parseInt(inp.value);if(v>0)a.steps[+inp.dataset.sm].m=v;else delete a.steps[+inp.dataset.sm].m});
+    const ns=$('#eNewStep').value.trim();if(ns){a.steps.push({t:ns,d:false});$('#eNewStep').value=''}
+    if(a.kind==='event'){a.date=$('#eDate').value||S.date;if($('#eStart')&&!$('#eStart').disabled)a.start=$('#eStart').value||'';
+      const c=parseInt($('#eDurC').value);if(c>0&&!document.querySelector('[data-dur].on'))a.duration=c}
+  }
+  function draw(){openSheet(html());bind()}
+  function bind(){
+    const B=$('#sheetBody');
+    $('#eEm').onclick=()=>$('#emPick').classList.toggle('hidden');
+    $('#eTitle').oninput=()=>{const v=$('#eTitle').value;
+      if(!picked){const g=PacelySmart.guess(v);if(g){a.emoji=g.emoji;a.color=g.color;$('#eEm').textContent=g.emoji;$('#eEm').style.background=g.color}}
+      if($('#eHint'))$('#eHint').textContent=smartHint(v).hint};
+    B.querySelectorAll('[data-rcp]').forEach(b=>b.onclick=()=>{const r=recent[+b.dataset.rcp];
+      Object.assign(a,{title:r.title,emoji:r.emoji,color:r.color,duration:r.duration,steps:(r.steps||[]).map(x=>({...x}))});
+      if(r.start&&!(a.date===S.today&&toMin(r.start)<nowMin()))a.start=r.start;picked=true;draw()});
+    B.querySelectorAll('[data-when]').forEach(b=>b.onclick=()=>{grab();const v=b.dataset.when;touched.start=true;
+      if(v==='allday'){a.allday=a.allday||'day';a.start=''}else if(v==='any'){a.allday='';a.start=''}else{a.allday='';a.start=a.start||(a.date===S.today?fmt(Math.ceil(nowMin()/15)*15):'09:00')}draw()});
+    B.querySelectorAll('[data-adt]').forEach(b=>b.onclick=()=>{grab();a.allday=b.dataset.adt;
+      const k={office:['🏢','#9AA8BA','In the office'],home:['🏠','#73CBA8','Working from home'],off:['🌴','#73CBA8','Day off'],sick:['🤒','#9AA8BA','Sick day'],holiday:['✈️','#7CB8F0','Holiday']}[a.allday];
+      if(k&&!picked){a.emoji=k[0];a.color=k[1];if(!a.title.trim())a.title=k[2]}draw()});
+    if($('#eNag'))$('#eNag').onclick=()=>{grab();a.nag=a.nag?0:1;draw()};
+    if($('#eTrip'))$('#eTrip').onclick=async()=>{grab();if(!a.location){toast('Add where it is first');return}
+      $('#eTripT').textContent='Working it out…';
+      try{const t=await api('/api/trip',{method:'POST',body:{place:a.location,date:a.date,start:a.start}});
+        if(t.error){$('#eTripT').textContent=t.error;return}
+        a.travel_min=t.minutes;a.travel_by=t.by;a.leave=t.leave||null;$('#eTripT').textContent=tripText(a)+(t.leave?`, arriving ${t.buffer} min early`:'')}catch(e){$('#eTripT').textContent=''}};
+    if($('#ePriv'))$('#ePriv').onclick=()=>{grab();a.private=a.private?0:1;draw()};
+    B.querySelectorAll('[data-em]').forEach(b=>b.onclick=()=>{grab();a.emoji=b.dataset.em;picked=true;draw()});
+    $('#eEmT').oninput=e=>{const v=e.target.value.trim();if(v){a.emoji=v;picked=true;$('#eEm').textContent=v}};
+    B.querySelectorAll('[data-col]').forEach(b=>b.onclick=()=>{grab();a.color=b.dataset.col;picked=true;draw()});
+    $('#eColC').onchange=e=>{grab();a.color=e.target.value.toUpperCase();draw()};
+    B.querySelectorAll('[data-pr]').forEach(b=>b.onclick=()=>{grab();a.priority=b.dataset.pr;draw()});
+    if($('#eAI'))$('#eAI').onclick=async()=>{grab();if(!a.title.trim()){toast('Give it a name first');return}
+      const btn=$('#eAI');btn.textContent='✨ Thinking…';btn.disabled=true;
+      try{const r=await aiCall('/api/ai/breakdown',{title:a.title,notes:a.notes});
+        a.steps=a.steps.concat(r.steps||[]);if(a.emoji==='📝'&&r.emoji)a.emoji=r.emoji;if(r.minutes&&a.kind==='event')a.duration=r.minutes;draw();toast('Steps added – edit them however you like')}
+      catch(e){btn.textContent='✨ Break it down';btn.disabled=false}};
+    if(a.kind==='event'){
+      if($('#eStart'))$('#eStart').onchange=()=>{touched.start=true};
+      $('#eDate').onchange=()=>{touched.date=true};
+      B.querySelectorAll('[data-dur]').forEach(b=>b.onclick=()=>{grab();a.duration=+b.dataset.dur;touched.dur=true;draw()});
+      $('#eDurC').oninput=e=>{const v=parseInt(e.target.value);if(v>0){a.duration=v;B.querySelectorAll('[data-dur]').forEach(x=>x.classList.remove('on'))}};
+      B.querySelectorAll('[data-rep]').forEach(b=>b.onclick=()=>{grab();touched.rep=true;a.repeat.type=b.dataset.rep;if(a.repeat.type==='days'&&!a.repeat.days.length)a.repeat.days=[(parse(a.date).getDay()+6)%7];draw()});
+      B.querySelectorAll('[data-day]').forEach(b=>b.onclick=()=>{grab();const i=+b.dataset.day;a.repeat.days=a.repeat.days.includes(i)?a.repeat.days.filter(x=>x!==i):[...a.repeat.days,i].sort();draw()});
+      B.querySelectorAll('[data-rem]').forEach(b=>b.onclick=()=>{grab();a.remind=+b.dataset.rem;draw()});
+      $('#eEnd').onclick=()=>{grab();a.end_alert=a.end_alert?0:1;draw()};
+    }
+    B.querySelectorAll('[data-sd]').forEach(b=>b.onclick=()=>{grab();a.steps.splice(+b.dataset.sd,1);draw()});
+    $('#eAddStep').onclick=()=>{grab();draw();setTimeout(()=>$('#eNewStep').focus(),50)};
+    $('#eNewStep').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();grab();draw();setTimeout(()=>$('#eNewStep').focus(),50)}};
+    $('#eCancel').onclick=closeSheet;
+    $('#eSave').onclick=save;
+  }
+  async function save(){
+    grab();
+    if(!a.title.trim()){toast('Give it a name first');$('#eTitle').focus();return}
+    if(!it&&a.kind==='event'){const p=PacelySmart.parse(a.title,S.today);
+      if(p.title&&(p.date||p.start||p.allday||p.duration||p.repeat)){a.title=p.title;
+        if(p.date&&!touched.date)a.date=p.date;if(p.allday&&!touched.start){a.allday=p.allday;a.start=''}else if(p.start&&!touched.start){a.start=p.start;a.allday=''}
+        if(p.duration&&!touched.dur)a.duration=p.duration;if(p.repeat&&!touched.rep)a.repeat=p.repeat}}
+    const body={title:a.title,emoji:a.emoji,color:a.color,notes:a.notes,steps:a.steps.filter(s=>s.t.trim()),kind:a.kind,private:!!a.private,nag:!!a.nag};
+    if(a.kind==='todo')body.priority=a.priority||'soon';
+    if(a.kind==='event'){Object.assign(body,{date:a.date,start:a.allday?null:(a.start||null),allday:a.allday||'',duration:a.duration,remind:a.remind,end_alert:a.end_alert,repeat:a.repeat})
+      if(!a.allday)Object.assign(body,{location:a.location||'',link:a.link||'',leave:a.leave||null,travel_min:a.travel_min||null,travel_by:a.travel_by||null})}
+    if(it&&!pre.plan){
+      if(it.master_id){
+        const sc=await choose('Change repeating activity',[{label:'Just this one',value:'this'},{label:'This and all future ones',value:'all'}]);
+        if(!sc)return draw();body.scope=sc;
+        if(sc==='this'){delete body.repeat}
+        if(sc==='all'){delete body.date}
+      }else if(JSON.stringify(a.repeat)===origRepeat||a.repeat.type==='none'){delete body.repeat}
+      await api('/api/activities/'+it.id,{method:'PUT',body});
+    }else if(it&&pre.plan){ // plan a todo: convert in place
+      await api('/api/activities/'+it.id,{method:'PUT',body:{...body,kind:'event'}});toast('Added to '+(a.date===S.today?'today':a.date));
+    }else{await api('/api/activities',{method:'POST',body});}
+    sheetClose=null;closeSheet();
+    if(pre.plan||(a.kind==='event'&&S.view!=='today')){S.date=a.date;go('today')}else{if(a.kind==='event')S.date=a.date;refresh()}
+  }
+  draw();setTimeout(()=>{if(!it)$('#eTitle')&&$('#eTitle').focus()},300);
+}
+
+/* ---------- mood ---------- */
+function moodSheet(){
+  let pick=null,energy=null;
+  openSheet(`<h3>How are you feeling?</h3><p class="sub">Just a quick check-in. There’s no wrong answer.</p>
+  <div class="moods" style="margin:16px 0 6px">${MOODS.map((m,i)=>`<button data-m="${i+1}" aria-label="${MOODNAMES[i]}">${m}</button>`).join('')}</div>
+  <div class="sub" id="mName" style="text-align:center;min-height:20px"></div>
+  <label class="f">Energy</label><div class="energy">${ENERGY.map((e,i)=>`<button data-en="${i+1}">${'▮'.repeat(i+1)}<br>${e}</button>`).join('')}</div>
+  <label class="f">Anything on your mind? (optional)</label><textarea id="mNote" placeholder="Tired, busy day ahead…"></textarea>
+  <button class="btn pri block" style="margin-top:16px" id="mSave">Save check-in</button>`);
+  $('#sheetBody').querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{pick=+b.dataset.m;$('#sheetBody').querySelectorAll('[data-m]').forEach(x=>x.classList.toggle('on',x===b));$('#mName').textContent=MOODNAMES[pick-1]});
+  $('#sheetBody').querySelectorAll('[data-en]').forEach(b=>b.onclick=()=>{energy=+b.dataset.en;$('#sheetBody').querySelectorAll('[data-en]').forEach(x=>x.classList.toggle('on',x===b))});
+  $('#mSave').onclick=async()=>{if(!pick){toast('Pick a face first');return}
+    await api('/api/moods',{method:'POST',body:{mood:pick,energy,note:$('#mNote').value}});closeSheet();
+    toast(energy&&energy<=2?'Thanks. Go gently today – maybe trim the plan 💛':'Thanks for checking in 💛');refresh();if(S.view==='me')go('me')};
+}
+async function reviewSheet(){
+  const day=await api('/api/day?date='+S.today);
+  const mine=day.items.filter(i=>i.kind!=='cal');const done=mine.filter(i=>i.done),left=mine.filter(i=>!i.done);
+  const r=day.review||{};
+  openSheet(`<h3>Review your day</h3><p class="sub">You finished ${done.length} of ${mine.length}. Whatever the number, you showed up.</p>
+  ${done.length?`<h2>Done ✨</h2><div class="card">${done.map(i=>`<div>${esc(i.emoji)} ${esc(i.title)}</div>`).join('')}</div>`:''}
+  ${left.length?`<h2>Not done</h2><div class="card">${left.map(i=>`<div class="muted">${esc(i.emoji)} ${esc(i.title)}</div>`).join('')}
+  <button class="btn sm" style="margin-top:10px" id="rvMove">Move these to tomorrow</button></div>`:''}
+  <label class="f">What went well?</label><textarea id="rvWell">${esc(r.well||'')}</textarea>
+  <label class="f">What was hard?</label><textarea id="rvHard">${esc(r.hard||'')}</textarea>
+  <label class="f">One thing for tomorrow</label><textarea id="rvTom" style="min-height:52px">${esc(r.tomorrow||'')}</textarea>
+  <button class="btn pri block" style="margin-top:16px" id="rvSave">Save review</button>`);
+  if($('#rvMove'))$('#rvMove').onclick=async()=>{const x=await api('/api/move_undone',{method:'POST',body:{date:S.today}});toast(`Moved ${x.moved} to tomorrow`);$('#rvMove').remove()};
+  $('#rvSave').onclick=async()=>{await api('/api/review',{method:'POST',body:{date:S.today,well:$('#rvWell').value,hard:$('#rvHard').value,tomorrow:$('#rvTom').value}});
+    closeSheet();toast('Saved. Rest well 🌙');refresh();if(S.view==='me')go('me')};
+}
+
+/* ---------- to-do ---------- */
+function renderTodo(){
+  const open=S.todos.filter(t=>!t.done),done=S.todos.filter(t=>t.done);
+  const groups=['now','soon','later'].map(p=>[p,open.filter(t=>(t.priority||'soon')===p)]).filter(([,l])=>l.length);
+  $('#app').innerHTML=`<div class="wrap"><h1>To-do</h1><div class="sub">Things to do sometime. Plan them into a day when you’re ready.</div>
+  <button class="btn pri block" id="dumpBtn" style="margin-top:16px">✨ Brain dump – turn thoughts into a plan</button>
+  <div class="row" style="margin-top:8px"><button class="btn" style="flex:1" id="chatBtn">💬 Talk it through</button><button class="btn" style="flex:1" id="photoBtn">📷 Photo to tasks</button></div>
+  <button class="btn block" style="margin-top:8px" id="notesBtn">📝 Meeting notes or a transcript → plans</button>
+  <input type="file" id="photoIn" accept="image/*" hidden>
+  <form id="tf" class="row" style="margin:12px 0 6px"><input type="text" id="tIn" placeholder="Add a to-do…" maxlength="200"><button class="btn" type="submit" style="flex:none">Add</button></form>
+  ${open.length>1&&S.ai.ok?'<div class="row" style="justify-content:flex-end"><button class="btn sm" id="sortBtn">✨ Sort for me</button></div>':''}
+  <div>${open.length?groups.map(([p,l])=>`<div class="ghead"><span class="prio ${p}">${PRIO[p]}</span>${l.length}</div>${l.map(todoHTML).join('')}`).join(''):`<div class="empty"><div class="big">🌿</div><b>All clear</b><p>Nothing waiting. Enjoy it.</p></div>`}</div>
+  ${done.length?`<div class="row" style="margin-top:20px"><button class="btn sm" id="tShow">${S.showDone?'Hide':'Show'} done (${done.length})</button><div class="sp"></div>${S.showDone?'<button class="btn sm danger" id="tClear">Clear done</button>':''}</div>
+  ${S.showDone?done.map(todoHTML).join(''):''}`:''}</div>`;
+  $('#tf').onsubmit=async e=>{e.preventDefault();const v=$('#tIn').value.trim();if(!v)return;
+    await api('/api/activities',{method:'POST',body:{kind:'todo',title:v,emoji:'📝',priority:'soon',color:COLORS[Math.floor(Math.random()*COLORS.length)]}});
+    S.todos=await api('/api/todos');renderTodo();$('#tIn').focus()};
+  $('#dumpBtn').onclick=coPlanner;
+  $('#chatBtn').onclick=chatSheet;
+  $('#notesBtn').onclick=notesSheet;
+  $('#photoBtn').onclick=()=>{if(!(S.ai.ok&&S.ai.provider==='gemini')){aiNeedsGemini('Photo to tasks');return}$('#photoIn').click()};
+  $('#photoIn').onchange=e=>{const f=e.target.files[0];e.target.value='';if(f)photoTasks(f)};
+  if($('#sortBtn'))$('#sortBtn').onclick=async()=>{const b=$('#sortBtn');b.textContent='✨ Sorting…';b.disabled=true;
+    try{await aiCall('/api/ai/prioritise',{});toast('Sorted into Now, Soon and Later')}catch(e){}
+    S.todos=await api('/api/todos');renderTodo()};
+  if($('#tShow'))$('#tShow').onclick=()=>{S.showDone=!S.showDone;renderTodo()};
+  if($('#tClear'))$('#tClear').onclick=async()=>{await api('/api/todos/clear',{method:'POST',body:{}});S.todos=await api('/api/todos');renderTodo()};
+  $('#app').querySelectorAll('[data-t]').forEach(el=>el.onclick=()=>detail(findItem(el.dataset.t)));
+  $('#app').querySelectorAll('[data-done]').forEach(b=>b.onclick=async()=>toggleDone(findItem(b.dataset.done)));
+  $('#app').querySelectorAll('[data-cy]').forEach(b=>b.onclick=async()=>{const t=findItem(b.dataset.cy);const order=['now','soon','later'];
+    const nx=order[(order.indexOf(t.priority||'soon')+1)%3];await api('/api/activities/'+t.id,{method:'PUT',body:{priority:nx}});S.todos=await api('/api/todos');renderTodo()});
+}
+function todoHTML(t){const s=t.steps||[];return `<div class="todo ${t.done?'done':''}"><button class="chk ${t.done?'on':''}" data-done="${t.id}" style="margin:0">✓</button>
+  <span class="em">${emojiIcon(t.emoji)}</span><span class="tt" data-t="${t.id}">${esc(t.title)}${s.length?` <span class="muted" style="font-size:13px">· ${s.filter(x=>x.d).length}/${s.length}</span>`:''}</span>
+  ${t.done?'':`<button class="prio ${t.priority||'soon'}" data-cy="${t.id}" aria-label="Change priority">${PRIO[t.priority||'soon']}</button>`}</div>`}
+
+/* ---------- AI co-planner ---------- */
+function coPlanner(){
+  if(!S.ai.ok){openSheet(`<h3>✨ Brain dump</h3><p>${MODE==='local'?'The private AI planner runs on this computer with Ollama, so nothing leaves your device.':'The AI planner runs privately on your own server, so nothing leaves your house.'}</p>
+    <div class="card" style="margin-top:12px">${esc(S.ai.error||'The AI helper is not set up yet.')}<p class="sub" style="margin-top:8px">${S.ai.provider==='gemini'?'Check your Gemini key in Me → AI helper.':'The installer sets it up. The first download of the AI model can take 10–20 minutes, then it’s ready.'}</p></div>
+    <button class="btn block" style="margin-top:16px" id="aiRetry">Check again</button>`);
+    $('#aiRetry').onclick=async()=>{S.ai=await api('/api/ai/status');closeSheet();if(S.ai.ok)coPlanner();else toast(S.ai.error||'Not ready yet')};return}
+  const draft=lsGet('dump','');
+  openSheet(`<h3>✨ Brain dump</h3><p class="sub">Type or speak everything on your mind – jobs, worries, errands. Tap the 🎤 on your keyboard to talk. I’ll turn it into clear tasks with small steps and times.</p>
+  <textarea id="aiText" style="min-height:160px;margin-top:12px" placeholder="Need to ring the dentist, the kitchen is a mess, email Mike about Friday, buy nappies, finish the podcast edit…">${esc(draft)}</textarea>
+  <button class="btn pri block" style="margin-top:14px" id="aiGo">Make it into tasks</button>
+  <p class="sub" style="margin-top:10px;text-align:center">Runs on your server. It can take a minute.</p>`);
+  $('#aiText').oninput=e=>lsSet('dump',e.target.value);
+  $('#aiGo').onclick=async()=>{const text=$('#aiText').value.trim();if(!text){toast('Write something first');return}
+    $('#sheetBody').innerHTML=`<h3>✨ Thinking…</h3><div class="spin"></div><p class="sub" style="text-align:center">Breaking it into small steps. This can take a minute or two on the server. Breathe out – you don’t have to hold all this in your head any more.</p>`;
+    try{const r=await aiCall('/api/ai/plan',{text});lsSet('dump','');aiReview(r.tasks||[])}
+    catch(e){closeSheet()}};
+}
+function aiNeedsGemini(what){
+  openSheet(`<h3>${esc(what)}</h3><p>${esc(what)} needs the Gemini helper, because reading photos is too heavy for the server.</p>
+  <p class="sub">Switch it on in <b>Me → AI helper</b>. It’s free, but on the free key Google may read what you send to improve its products.</p>
+  <button class="btn pri block" style="margin-top:16px" id="toAi">Go to AI helper</button>`);
+  $('#toAi').onclick=()=>{closeSheet();go('me').then(()=>setTimeout(()=>{const el=$('#aiSection');el&&el.scrollIntoView({behavior:'smooth'})},400))};
+}
+async function shareWeek(){
+  const r=await api('/api/summary?days=7');const text=r.text+'\n\n(From my Pacely planner.)';
+  openSheet(`<h3>📊 How my week went</h3><p class="sub">Read it first. You can change anything before sending it.</p>
+  <textarea id="wkTxt" rows="12" style="margin-top:10px;font-size:15px">${esc(text)}</textarea>
+  <div style="display:grid;gap:10px;margin-top:14px"><button class="btn pri block" id="wkShare">${IS_IOS?'Share… (pick Gemini)':'Copy it'}</button>
+  <button class="btn block" id="wkGem">Copy and open Gemini</button><button class="btn block" id="wkNo">Close</button></div>`);
+  $('#wkShare').onclick=()=>{const t=$('#wkTxt').value;if(IS_IOS)native({type:'share',text:t});else copyText(t)};
+  $('#wkGem').onclick=()=>{const t=$('#wkTxt').value;copyText(t);const url='https://gemini.google.com/app';setTimeout(()=>IS_NATIVE?native({type:'open',url}):window.open(url,'_blank'),400);toast('Copied. Paste it into Gemini')};
+  $('#wkNo').onclick=closeSheet;
+}
+/* Paste meeting notes, a transcript, an email or a letter: the AI helper finds appointments and things to do. */
+function notesSheet(){
+  if(!S.ai.ok){aiNeedsGemini?aiNeedsGemini('Meeting notes to plans'):coPlanner();return}
+  openSheet(`<h3>📝 Notes or a transcript → plans</h3><p class="sub">Paste meeting notes, a transcript, an email or a letter. I'll find appointments and things to do, and you choose which to add.</p>
+  <textarea id="xTxt" rows="8" placeholder="Paste here…" style="margin-top:12px"></textarea>
+  <div class="row" style="gap:8px;margin-top:8px"><label class="btn" style="flex:1;text-align:center">📄 Choose a file<input type="file" id="xFile" accept=".txt,.vtt,.srt,.md,text/plain,text/vtt" hidden></label>
+  ${IS_IOS?'<button class="btn" style="flex:1" id="xMic">🎙️ Say it</button>':''}</div>
+  <div style="display:grid;gap:10px;margin-top:16px"><button class="btn pri block" id="xGo">✨ Find plans</button><button class="btn block" id="xNo">Cancel</button></div>`);
+  $('#xFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;if(f.size>2e6){toast('That file is too big');return}let t=await f.text();
+    if(/\.(vtt|srt)$/i.test(f.name))t=t.replace(/^WEBVTT.*$/m,'').replace(/^\d+\s*$/gm,'').replace(/^[\d:.,]+ --> [\d:.,]+.*$/gm,'').replace(/\n{2,}/g,'\n');$('#xTxt').value=t.trim()};
+  if($('#xMic'))$('#xMic').onclick=()=>dictate(t=>{$('#xTxt').value=($('#xTxt').value+' '+t).trim()});
+  $('#xNo').onclick=closeSheet;
+  $('#xGo').onclick=async()=>{const text=$('#xTxt').value.trim();if(text.length<10){toast('Paste the notes first');return}
+    openSheet(`<h3>📝 Reading it…</h3><div class="spin"></div><p class="sub" style="text-align:center">Looking for appointments and things to do.</p>`);
+    try{const r=await aiCall('/api/ai/extract',{text});extractReview(r.items||[])}catch(e){closeSheet()}};
+}
+function extractReview(items){
+  if(!items.length){openSheet(`<h3>Nothing found</h3><p class="sub">I couldn't find any appointments or things to do in that.</p><button class="btn block" style="margin-top:16px" id="xOk">OK</button>`);$('#xOk').onclick=closeSheet;return}
+  items.forEach(x=>x.on=true);
+  const when=x=>x.kind==='event'?`${parse(x.date).toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'})}${x.start?' · '+x.start:''}`:'To-do list';
+  const draw=()=>{openSheet(`<h3>Found ${items.length} thing${items.length>1?'s':''}</h3><p class="sub">Untick anything you don't want.</p>
+    <div class="card" style="margin-top:12px;padding:4px 14px">${items.map((x,i)=>`<div class="xitem"><button class="chk ${x.on?'on':''}" data-xi="${i}">✓</button>
+      <div style="flex:1;min-width:0"><b>${esc(x.emoji)} ${esc(x.title)}</b><div class="sub">${esc(when(x))}</div>${x.notes?`<div class="sub selectable" style="margin-top:4px">${linkPhones(esc(x.notes))}</div>`:''}</div></div>`).join('')}</div>
+    <div style="display:grid;gap:10px;margin-top:16px"><button class="btn pri block" id="xAdd">Add ${items.filter(x=>x.on).length}</button><button class="btn block" id="xNo">Cancel</button></div>`);
+    $('#sheetBody').querySelectorAll('[data-xi]').forEach(b=>b.onclick=()=>{const x=items[+b.dataset.xi];x.on=!x.on;draw()});
+    $('#xNo').onclick=closeSheet;
+    $('#xAdd').onclick=async()=>{const pick=items.filter(x=>x.on);for(const x of pick){
+      await api('/api/activities',{method:'POST',body:x.kind==='event'?{kind:'event',title:x.title,emoji:x.emoji,color:x.color,date:x.date,start:x.start||null,duration:x.minutes,notes:x.notes,remind:x.start?15:0,end_alert:0}
+        :{kind:'todo',title:x.title,emoji:x.emoji,color:x.color,notes:x.notes,priority:'soon'}})}
+      closeSheet();haptic('success');sfx('add');toast(`Added ${pick.length} ✨`);refresh()}};
+  draw();
+}
+function chatSheet(){
+  if(!S.ai.ok){coPlanner();return}
+  let hist=lsGet('chat',[]);let pending=[];
+  const slow=S.ai.provider!=='gemini';
+  function draw(){
+    openSheet(`<div class="row"><h3 style="flex:1">💬 Talk it through</h3><button class="btn sm" id="chNew">New chat</button></div>
+    <p class="sub">Tell me what’s going on. I’ll help you work out what matters and what to do first.${slow?' The private helper is slow – Gemini is quicker for chatting.':''}</p>
+    <div class="chat" id="chList">${hist.length?hist.map(m=>`<div class="msg ${m.role==='assistant'?'ai':'me'}">${esc(m.text)}</div>`).join(''):'<div class="msg ai">Hi. What’s on your mind?</div>'}</div>
+    ${pending.length?`<button class="btn pri block" style="margin-top:10px" id="chTasks">✨ Review ${pending.length} suggested task${pending.length===1?'':'s'}</button>`:''}
+    ${!hist.length&&!S.me.local?`<button class="choice ${lsGet('chatWeek',false)?'on':''}" id="chWeek" style="margin-top:10px">📊 Let it see how my week went</button>`:''}
+    <form id="chF" class="row" style="margin-top:10px"><input type="text" id="chIn" placeholder="Type, or tap 🎤 on the keyboard" maxlength="2000">${IS_IOS?'<button class="micbtn" type="button" id="chMic">🎙️</button>':''}<button class="btn pri" type="submit" style="flex:none">Send</button></form>`);
+    if($('#chWeek'))$('#chWeek').onclick=()=>{lsSet('chatWeek',!lsGet('chatWeek',false));draw()};
+    if($('#chMic'))$('#chMic').onclick=()=>dictate(t=>{$('#chIn').value=t;$('#chIn').focus()});
+    const l=$('#chList');l.scrollTop=l.scrollHeight;
+    $('#chNew').onclick=()=>{hist=[];pending=[];lsSet('chat',[]);draw()};
+    if($('#chTasks'))$('#chTasks').onclick=()=>aiReview(pending);
+    $('#chF').onsubmit=async e=>{e.preventDefault();const t=$('#chIn').value.trim();if(!t)return;
+      const before=hist.slice();hist.push({role:'user',text:t});lsSet('chat',hist);draw();
+      $('#chList').insertAdjacentHTML('beforeend','<div class="msg ai" id="chWait">…</div>');$('#chList').scrollTop=1e9;
+      try{const r=await aiCall('/api/ai/chat',{text:t,history:before,week:!before.length&&lsGet('chatWeek',false)});hist.push({role:'assistant',text:r.reply});pending=r.tasks||[];lsSet('chat',hist.slice(-30))}
+      catch(err){hist.pop()}
+      draw();setTimeout(()=>$('#chIn')&&$('#chIn').focus(),50)};
+  }
+  draw();
+}
+function shrinkImage(file){return new Promise((res,rej)=>{const img=new Image();const url=URL.createObjectURL(file);
+  img.onload=()=>{const max=1600;let w=img.naturalWidth,h=img.naturalHeight;const k=Math.min(1,max/Math.max(w,h));w=Math.round(w*k);h=Math.round(h*k);
+    const cv=document.createElement('canvas');cv.width=w;cv.height=h;cv.getContext('2d').drawImage(img,0,0,w,h);URL.revokeObjectURL(url);res(cv.toDataURL('image/jpeg',.85))};
+  img.onerror=()=>{URL.revokeObjectURL(url);rej(new Error('bad image'))};img.src=url})}
+async function photoTasks(file){
+  openSheet(`<h3>📷 Reading your photo…</h3><div class="spin"></div><p class="sub" style="text-align:center">Finding the things that need doing.</p>`);
+  try{const data=await shrinkImage(file);const r=await aiCall('/api/ai/photo',{image:data});aiReview(r.tasks||[])}
+  catch(e){closeSheet();if(String(e.message||'').includes('bad image'))toast('That photo couldn’t be opened')}
+}
+function aiReview(tasks){
+  tasks.forEach(t=>t.on=true);
+  function draw(){
+    openSheet(`<h3>Here’s your plan</h3><p class="sub">Untick anything you don’t want. You can edit each one later.</p>
+    <div style="margin-top:12px">${tasks.map((t,i)=>`<div class="aicard ${t.on?'':'off'}"><button class="chk ${t.on?'on':''}" data-ai="${i}" style="margin:0">✓</button><span class="em">${emojiIcon(t.emoji)}</span>
+      <div style="flex:1;min-width:0"><b>${esc(t.title)}</b><div class="sub">${dur(t.minutes)} · <span class="prio ${t.priority}">${PRIO[t.priority]}</span></div>
+      ${t.steps.length?`<ul>${t.steps.map(s=>`<li>${esc(s.t)} · ${s.m} min</li>`).join('')}</ul>`:''}</div></div>`).join('')||'<p>No tasks came back. Try adding a bit more detail.</p>'}</div>
+    <h2>What next?</h2>
+    <button class="btn pri block" id="aiTodo">Add to my to-do list</button>
+    <div class="card" style="margin-top:12px"><b>Or plan them into a day</b>
+      <div class="row" style="margin-top:10px"><input type="date" id="aiDate" value="${S.today}"><input type="time" id="aiStart" value="${fmt(Math.ceil(nowMin()/15)*15)}"></div>
+      <div class="choices" style="margin-top:10px" id="aiGap">${[0,5,10].map(g=>`<button class="choice ${g===5?'on':''}" data-gap="${g}">${g?g+' min breaks':'No breaks'}</button>`).join('')}</div>
+      <button class="btn block" style="margin-top:10px" id="aiSched">Plan them in order</button></div>`);
+    $('#sheetBody').querySelectorAll('[data-ai]').forEach(b=>b.onclick=()=>{tasks[+b.dataset.ai].on=!tasks[+b.dataset.ai].on;draw()});
+    $('#sheetBody').querySelectorAll('[data-gap]').forEach(b=>b.onclick=()=>{$('#sheetBody').querySelectorAll('[data-gap]').forEach(x=>x.classList.toggle('on',x===b))});
+    const chosen=()=>tasks.filter(t=>t.on);
+    $('#aiTodo').onclick=async()=>{if(!chosen().length){toast('Tick at least one');return}
+      await api('/api/ai/add',{method:'POST',body:{tasks:chosen(),mode:'todo'}});closeSheet();toast(`Added ${chosen().length} to your to-do list`);go('todo')};
+    $('#aiSched').onclick=async()=>{if(!chosen().length){toast('Tick at least one');return}
+      const gap=+(document.querySelector('[data-gap].on')||{dataset:{gap:5}}).dataset.gap;const date=$('#aiDate').value||S.today;
+      await api('/api/ai/add',{method:'POST',body:{tasks:chosen(),mode:'schedule',date,start:$('#aiStart').value,gap}});closeSheet();toast('Planned in ✨');S.date=date;S.mode='day';lsSet('mode','day');go('today')};
+  }
+  draw();
+}
+
+/* ---------- focus ---------- */
+let F=lsGet('focus',{total:25*60,left:25*60,end:null,running:false,itemId:null,title:'',emoji:'⏳',color:COLORS[6],steps:[]});
+let fTick=null,fLastStep=-1;
+function fLeft(){return F.running?Math.max(0,Math.round((F.end-Date.now())/1000)):F.left}
+function saveF(){lsSet('focus',F)}
+function timedSteps(){const st=F.steps||[];return st.length&&st.every(x=>x.m)?st:null}
+function stepAt(elapsed){const st=timedSteps();if(!st)return null;let acc=0;
+  for(let i=0;i<st.length;i++){const len=st[i].m*60;if(elapsed<acc+len)return{i,left:acc+len-elapsed,len};acc+=len}
+  return{i:st.length-1,left:0,len:st[st.length-1].m*60}}
+function startFocusFor(it){
+  const st=toMin(it.start);let mins=it.duration;
+  const steps=(it.steps||[]).map(x=>({...x}));
+  if(steps.length&&steps.every(x=>x.m))mins=steps.reduce((a,b)=>a+b.m,0);
+  else if(it.start&&it.date===S.today){const n=nowMin();if(n>=st&&n<st+it.duration)mins=Math.max(1,Math.round(st+it.duration-n))}
+  F={total:mins*60,left:mins*60,end:null,running:false,itemId:it.kind==='cal'?null:it.id,title:it.title,emoji:it.emoji,color:it.color,steps};
+  saveF();go('focus').then(()=>fStart());
+}
+function tellNative(){
+  if(F.running)native({type:'focus',end:F.end,start:F.end-F.total*1000,title:F.title||'Focus',emoji:F.emoji||'⏳',color:F.color,itemId:typeof F.itemId==='number'?F.itemId:0});
+  else native({type:'focusStop'});
+}
+function fStart(){sfx('focus-start');if(fLeft()<=0)F.left=F.total;F.end=Date.now()+F.left*1000;F.running=true;saveF();
+  api('/api/focus',{method:'POST',body:{end:F.end,total:F.total,title:F.title?`${F.emoji} ${F.title}`:'',item:typeof F.itemId==='number'?F.itemId:0,color:F.color}}).catch(()=>{});tellNative();renderFocus();chime(true)}
+async function adoptServerFocus(){
+  try{const f=await api('/api/focus');
+    if(f&&f.end&&f.end>Date.now()&&!(F.running&&Math.abs(F.end-f.end)<2000)){
+      F={total:f.total||Math.round((f.end-Date.now())/1000),left:0,end:f.end,running:true,itemId:f.item||null,title:(f.title||'Focus').replace(/^\S+\s/,''),emoji:(f.title||'⏳ ').split(' ')[0]||'⏳',color:f.color||COLORS[6],steps:[]};
+      if(F.itemId){const it=findItem(F.itemId);if(it)F.steps=(it.steps||[]).map(x=>({...x}))}
+      saveF()}
+    else if(F.running&&(!f||!f.end)&&F.end<Date.now()){F.running=false;F.left=0;saveF()}
+  }catch(e){}
+}
+function fPause(){sfx('pause');F.left=fLeft();F.running=false;F.end=null;saveF();api('/api/focus',{method:'POST',body:{}}).catch(()=>{});tellNative();renderFocus()}
+function fReset(m){F.running=false;F.end=null;if(m){F.total=m*60}F.left=F.total;saveF();api('/api/focus',{method:'POST',body:{}}).catch(()=>{});tellNative();renderFocus()}
+let actx=null;
+function chime(soft,short){if(!soft){sfx(short?'next-step':'timer',()=>chimeSynth(soft,short));return}chimeSynth(soft,short)}
+function chimeSynth(soft,short){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();if(soft)return;const notes=short?[659.25,783.99]:[523.25,659.25,783.99];
+  notes.forEach((f,i)=>{const o=actx.createOscillator(),g=actx.createGain();o.type='sine';o.frequency.value=f;o.connect(g);g.connect(actx.destination);
+  const t=actx.currentTime+i*.35;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.25,t+.03);g.gain.exponentialRampToValueAtTime(.001,t+1.6);o.start(t);o.stop(t+1.7)})}catch(e){}}
+function pieSVG(frac,color){
+  const r=48,cx=50,cy=50;frac=Math.max(0,Math.min(1,frac));
+  let path='';
+  if(frac>=.9999)path=`<circle cx="50" cy="50" r="${r}" fill="${color}"/>`;
+  else if(frac>0){const a=frac*2*Math.PI;const x=cx+r*Math.sin(a),y=cy-r*Math.cos(a);
+    path=`<path d="M50 50 L50 ${cy-r} A${r} ${r} 0 ${frac>.5?1:0} 1 ${x.toFixed(3)} ${y.toFixed(3)} Z" fill="${color}"/>`}
+  let ticks='';for(let i=0;i<12;i++){const a=i/12*2*Math.PI;ticks+=`<line x1="${50+45*Math.sin(a)}" y1="${50-45*Math.cos(a)}" x2="${50+48.5*Math.sin(a)}" y2="${50-48.5*Math.cos(a)}" stroke="var(--muted)" stroke-width=".8" opacity=".5"/>`}
+  return `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="${r}" fill="var(--card2)"/>${path}${ticks}</svg>`;
+}
+function stepLabel(left){const sa=stepAt(F.total-left);if(!sa)return '';const st=timedSteps();
+  return `<div class="card" style="margin:8px auto 0;max-width:360px"><div class="t" style="font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--accent)">Step ${sa.i+1} of ${st.length}</div>
+  <div style="font-size:19px;font-weight:700;margin:2px 0">${esc(st[sa.i].t)}</div><div class="sub">${fmt2(Math.round(sa.left))} left in this step${sa.i<st.length-1?` · next: ${esc(st[sa.i+1].t)}`:''}</div></div>`}
+function renderFocus(){
+  clearInterval(fTick);
+  const left=fLeft();
+  const presets=[5,10,15,25,45,60];
+  const steps=F.steps||[];
+  const sa=stepAt(F.total-left);fLastStep=sa?sa.i:-1;
+  $('#app').innerHTML=`<div class="wrap" style="text-align:center"><h1>Focus</h1>
+  <div class="sub" id="fTitle">${F.title?`${esc(F.emoji)} ${esc(F.title)}`:'Pick a time and start. The colour shrinks as time passes.'}</div>
+  <div class="timer"><div id="fPie">${pieSVG(left/F.total,F.color)}</div><div class="c"><b id="fClock">${fmt2(left)}</b></div></div>
+  <div id="fStep">${stepLabel(left)}</div>
+  <div class="ctrl">${F.running?`<button class="btn pri" id="fPause" style="min-width:130px">❚❚ Pause</button>`:`<button class="btn pri" id="fGo" style="min-width:130px">▶ ${left<F.total&&left>0?'Resume':'Start'}</button>`}
+  <button class="btn" id="fPlus">+5 min</button><button class="btn" id="fReset" aria-label="Reset">↺</button></div>
+  ${timedSteps()?'':`<div class="choices" style="justify-content:center;margin-top:8px">${presets.map(m=>`<button class="choice ${F.total===m*60?'on':''}" data-p="${m}">${m} min</button>`).join('')}</div>`}
+  ${steps.length?`<div class="card steps" style="text-align:left;margin-top:20px;padding:4px 14px">${steps.map((s,i)=>`<div class="st ${s.d?'on':''}" ${sa&&sa.i===i&&F.running?'style="font-weight:700"':''}><span>${sa&&sa.i===i?'▶ ':''}${esc(s.t)}${s.m?` <small class="muted">· ${s.m} min</small>`:''}</span><button class="chk ${s.d?'on':''}" data-fs="${i}">✓</button></div>`).join('')}</div>`:''}
+  ${F.itemId?`<div class="row" style="justify-content:center;margin-top:16px"><button class="btn sm" id="fDone">✓ Mark activity done</button><button class="btn sm" id="fClear">Clear activity</button></div>`:F.title?`<div class="row" style="justify-content:center;margin-top:16px"><button class="btn sm" id="fClear">Clear</button></div>`:''}
+  <p class="sub" style="margin-top:22px">${timedSteps()?'Each step has its own time. You’ll hear a soft chime when it’s time to move on. ':''}You’ll get a notification when time’s up, even if your phone is locked.</p></div>`;
+  if($('#fGo'))$('#fGo').onclick=fStart;
+  if($('#fPause'))$('#fPause').onclick=fPause;
+  $('#fReset').onclick=()=>fReset();
+  $('#fPlus').onclick=()=>{if(F.running){F.end+=300000;F.total+=300;saveF();api('/api/focus',{method:'POST',body:{end:F.end,title:F.title}}).catch(()=>{});tellNative()}else{F.left+=300;F.total+=300;saveF()}renderFocus()};
+  document.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>fReset(+b.dataset.p));
+  document.querySelectorAll('[data-fs]').forEach(b=>b.onclick=async()=>{const i=+b.dataset.fs;F.steps[i].d=!F.steps[i].d;saveF();renderFocus();
+    if(F.itemId)await api('/api/activities/'+F.itemId,{method:'PUT',body:{steps:F.steps}}).catch(()=>{})});
+  if($('#fDone'))$('#fDone').onclick=async()=>{await api('/api/activities/'+F.itemId,{method:'PUT',body:{done:true,steps:F.steps.map(x=>({...x,d:true}))}});toast('Done! 🎉');F.itemId=null;F.title='';F.steps=[];F.emoji='⏳';fReset()};
+  if($('#fClear'))$('#fClear').onclick=()=>{F.itemId=null;F.title='';F.steps=[];F.emoji='⏳';F.color=COLORS[6];fReset(25)};
+  if(F.running)fTick=setInterval(()=>{
+    if(S.view!=='focus'){clearInterval(fTick);return}
+    const l=fLeft();$('#fClock').textContent=fmt2(l);$('#fPie').innerHTML=pieSVG(l/F.total,F.color);
+    const sa=stepAt(F.total-l);
+    if(sa){if(sa.i!==fLastStep&&l>0){ // moved to next step
+        if(fLastStep>=0&&F.steps[fLastStep]){F.steps[fLastStep].d=true;saveF();if(F.itemId)api('/api/activities/'+F.itemId,{method:'PUT',body:{steps:F.steps}}).catch(()=>{})}
+        chime(false,true);toast('Next step: '+F.steps[sa.i].t);fLastStep=sa.i;renderFocus();return}
+      $('#fStep').innerHTML=stepLabel(l)}
+    if(l<=0){clearInterval(fTick);F.running=false;F.left=0;F.end=null;saveF();chime();toast('Time’s up! Take a breath 🌿');
+      api('/api/focus/log',{method:'POST',body:{minutes:Math.round(F.total/60),title:F.title}}).catch(()=>{});native({type:'focusStop'});
+      try{navigator.vibrate&&navigator.vibrate([200,100,200])}catch(e){}renderFocus()}
+  },500);
+}
+const fmt2=s=>`${Math.floor(s/60)}:${pad(s%60)}`;
+
+/* ---------- routines ---------- */
+function renderRoutines(){
+  $('#app').innerHTML=`<div class="wrap"><h1>Routines</h1><div class="sub">Sets of activities you do often. Add one to any day in one tap.</div>
+  <div class="rgrid" style="margin-top:16px">${S.routines.map(r=>{const t=r.items.reduce((a,b)=>a+b.duration,0);
+    return `<button class="rcard" data-r="${r.id}"><div class="e">${esc(r.emoji)}</div><b>${esc(r.name)}</b><div class="sub">${r.items.length} ${r.items.length===1?'activity':'activities'} · ${dur(t)}</div></button>`}).join('')}
+  <button class="rcard" id="rNew" style="border:2px dashed var(--line);box-shadow:none;background:none"><div class="e">＋</div><b>New routine</b><div class="sub">Make your own</div></button></div></div>`;
+  document.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>routineSheet(S.routines.find(r=>r.id==b.dataset.r)));
+  $('#rNew').onclick=()=>editRoutine(null);
+}
+function routineSheet(r){
+  const t=r.items.reduce((a,b)=>a+b.duration,0);
+  let mins=0;
+  openSheet(`<div class="row"><span style="font-size:40px">${esc(r.emoji)}</span><div><h3>${esc(r.name)}</h3><div class="sub">${r.items.length} activities · ${dur(t)}</div></div></div>
+  <div style="margin-top:12px">${r.items.map(i=>{const s=`<div class="ritem"><div class="e" style="--c:${esc(i.color)}">${esc(i.emoji)}</div><div style="flex:1"><b>${esc(i.title)}</b><div class="sub">+${mins} min · ${dur(i.duration)}${i.steps.length?` · ${i.steps.length} steps`:''}</div></div></div>`;mins+=i.duration;return s}).join('')}</div>
+  <h2>Add to a day</h2><div class="row"><input type="date" id="rDate" value="${S.date||S.today}"><input type="time" id="rStart" value="${fmt(Math.ceil(nowMin()/15)*15)}"></div>
+  <div style="display:grid;gap:10px;margin-top:14px"><button class="btn pri block" id="rApply">Add routine</button>
+  <div class="row"><button class="btn" style="flex:1" id="rEdit">✏️ Edit</button><button class="btn danger" style="flex:1" id="rDel">🗑️ Delete</button></div></div>`);
+  $('#rApply').onclick=async()=>{const date=$('#rDate').value,start=$('#rStart').value;if(!date||!start){toast('Choose a day and time');return}
+    await api(`/api/routines/${r.id}/apply`,{method:'POST',body:{date,start}});closeSheet();toast(`${r.name} added`);S.date=date;go('today')};
+  $('#rEdit').onclick=()=>{sheetClose=null;closeSheet();setTimeout(()=>editRoutine(r),260)};
+  $('#rDel').onclick=async()=>{sheetClose=null;closeSheet();if(!await choose(`Delete “${r.name}”?`,[{label:'Delete routine',value:true,cls:'danger'}]))return;
+    await api('/api/routines/'+r.id,{method:'DELETE'});go('routines')};
+}
+function editRoutine(r){
+  const R=r?JSON.parse(JSON.stringify(r)):{name:'',emoji:'✨',items:[{title:'',emoji:'📝',color:COLORS[5],duration:10,steps:[]}]};
+  function html(){return `<h3>${r?'Edit':'New'} routine</h3>
+  <label class="f">Name</label><div class="row"><input type="text" id="rEm" value="${esc(R.emoji)}" style="width:64px;flex:none;text-align:center;font-size:22px" maxlength="8"><input type="text" id="rName" value="${esc(R.name)}" placeholder="e.g. School run"></div>
+  <label class="f">Activities, in order</label>
+  ${R.items.map((i,n)=>`<div class="redit"><div class="row"><input type="text" data-ie="${n}" value="${esc(i.emoji)}" style="width:56px;flex:none;text-align:center" maxlength="8">
+  <input type="text" data-it="${n}" value="${esc(i.title)}" placeholder="Activity"><input type="number" data-id="${n}" value="${i.duration}" min="1" style="width:76px;flex:none" aria-label="minutes"></div>
+  <div class="row" style="margin-top:8px;flex-wrap:wrap">${COLORS.map(c=>`<button data-ic="${n}" data-c="${c}" style="width:26px;height:26px;border-radius:50%;background:${c};${c===i.color?'outline:2.5px solid var(--ink);outline-offset:2px':''}"></button>`).join('')}</div>
+  <textarea data-is="${n}" placeholder="Steps, one per line (optional)" style="min-height:52px;margin-top:8px">${esc(i.steps.join('\n'))}</textarea>
+  <div class="row" style="margin-top:6px"><button class="btn sm" data-up="${n}">↑</button><button class="btn sm" data-dn="${n}">↓</button><div class="sp"></div><button class="btn sm danger" data-rm="${n}">Remove</button></div></div>`).join('')}
+  <button class="btn block" id="rAdd">＋ Add activity</button>
+  <div style="display:grid;gap:10px;margin-top:20px"><button class="btn pri block" id="rSave">Save routine</button><button class="btn block" id="rCancel">Cancel</button></div>`}
+  function grab(){R.name=$('#rName').value;R.emoji=$('#rEm').value||'✨';
+    R.items.forEach((i,n)=>{i.emoji=$(`[data-ie="${n}"]`).value||'📝';i.title=$(`[data-it="${n}"]`).value;i.duration=Math.max(1,parseInt($(`[data-id="${n}"]`).value)||10);
+      i.steps=$(`[data-is="${n}"]`).value.split('\n').map(s=>s.trim()).filter(Boolean)})}
+  function draw(){const y=$('#sheet').scrollTop;openSheet(html());$('#sheet').scrollTop=y;bind()}
+  function bind(){const B=$('#sheetBody');
+    B.querySelectorAll('[data-ic]').forEach(b=>b.onclick=()=>{grab();R.items[+b.dataset.ic].color=b.dataset.c;draw()});
+    B.querySelectorAll('[data-up]').forEach(b=>b.onclick=()=>{grab();const n=+b.dataset.up;if(n>0)[R.items[n-1],R.items[n]]=[R.items[n],R.items[n-1]];draw()});
+    B.querySelectorAll('[data-dn]').forEach(b=>b.onclick=()=>{grab();const n=+b.dataset.dn;if(n<R.items.length-1)[R.items[n+1],R.items[n]]=[R.items[n],R.items[n+1]];draw()});
+    B.querySelectorAll('[data-rm]').forEach(b=>b.onclick=()=>{grab();R.items.splice(+b.dataset.rm,1);draw()});
+    $('#rAdd').onclick=()=>{grab();R.items.push({title:'',emoji:'📝',color:COLORS[R.items.length%COLORS.length],duration:10,steps:[]});draw()};
+    $('#rCancel').onclick=closeSheet;
+    $('#rSave').onclick=async()=>{grab();if(!R.name.trim()){toast('Give the routine a name');return}
+      R.items=R.items.filter(i=>i.title.trim());if(!R.items.length){toast('Add at least one activity');return}
+      if(r)await api('/api/routines/'+r.id,{method:'PUT',body:R});else await api('/api/routines',{method:'POST',body:R});
+      closeSheet();go('routines')};
+  }
+  draw();
+}
+
+/* ---------- me / settings ---------- */
+async function copyText(t){
+  if(IS_NATIVE){native({type:'copy',text:t});toast('Copied');return}
+  try{await navigator.clipboard.writeText(t);toast('Copied');return}catch(e){}
+  const ta=document.createElement('textarea');ta.value=t;ta.setAttribute('readonly','');ta.style.cssText='position:fixed;top:0;left:0;opacity:0;font-size:16px';
+  document.body.appendChild(ta);ta.focus();ta.select();ta.setSelectionRange(0,t.length);let ok=false;try{ok=document.execCommand('copy')}catch(e){}ta.remove();
+  toast(ok?'Copied':'Press and hold the link to copy it');
+}
+async function renderMe(){
+  const feats=S.me.features||[];
+  const [ins,cals,ai,shares]=await Promise.all([api('/api/insights'),api('/api/calendars'),api('/api/ai/status').catch(()=>S.ai),feats.includes('share')?api('/api/shares').catch(()=>null):Promise.resolve(null)]);S.ai=ai;
+  const shareURL=t=>location.origin+'/s/'+t;
+  const today=S.moods.filter(m=>m.date===S.today);
+  const standalone=window.matchMedia('(display-mode: standalone)').matches||navigator.standalone;
+  const perm=('Notification' in window)?Notification.permission:'unsupported';
+  const maxDone=Math.max(1,...ins.days.map(d=>d.done));
+  const feed=cals.feed?location.origin+cals.feed:'';
+  const LOCALMODE=MODE==='local';
+  const lastBk=S.me.last_backup?Math.floor((Date.now()-new Date(S.me.last_backup))/86400000):null;
+  $('#app').innerHTML=`<div class="wrap"><h1>Me</h1>
+
+  <h2>Your progress</h2><div class="card">
+    <div class="stats"><div class="stat"><b>${ins.good_days??ins.streak}</b><small>good days, last 2 weeks</small></div><div class="stat"><b>${ins.week_done}</b><small>done this week</small></div><div class="stat"><b>${ins.focus_week}</b><small>focus min this week</small></div></div>
+    <div class="bars" aria-label="Activities done each day for 14 days">${ins.days.map(d=>`<i style="height:${d.done/maxDone*100}%;${d.done?'':'opacity:.2'}" title="${d.date}: ${d.done}"></i>`).join('')}</div>
+    <div class="sub">Done each day, last 14 days · ${ins.total} done in total. Missed days never reset anything</div>
+    <div class="trophies">${ins.trophies.map(t=>`<div class="trophy ${t.got?'':'no'}" title="${esc(t.desc)}"><span>${t.emoji}</span>${esc(t.name)}</div>`).join('')}</div>
+  </div>
+
+  <h2>Check-in</h2><div class="card"><div class="row"><div style="flex:1"><b>${today.length?`Today: ${MOODS[today[0].mood-1]} ${MOODNAMES[today[0].mood-1]}`:'How are you today?'}</b><div class="sub">Mood and energy, last 14 days</div></div><button class="btn sm pri" id="meMood">Check in</button></div>
+  <div class="mhist">${ins.days.map(d=>`<i style="height:${d.mood?d.mood/5*100:4}%;${d.mood?'':'opacity:.2'}"></i>`).join('')}</div>
+  <div class="mhist" style="height:30px;margin-top:0">${ins.days.map(d=>`<i style="height:${d.energy?d.energy/5*100:4}%;background:#F6C453;${d.energy?'':'opacity:.2'}"></i>`).join('')}</div>
+  ${S.moods.slice(0,6).map(m=>`<div class="set"><span style="font-size:24px">${MOODS[m.mood-1]}</span><div class="l"><b>${MOODNAMES[m.mood-1]}${m.energy?` · energy ${ENERGY[m.energy-1].toLowerCase()}`:''}</b><small>${new Date(m.ts).toLocaleString('en-GB',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}${m.note?' · '+esc(m.note):''}</small></div><button class="btn sm" data-md="${m.id}" aria-label="Delete">✕</button></div>`).join('')}
+  <button class="btn block" style="margin-top:12px" id="meReview">🌙 Review my day</button></div>
+
+  <h2>Calendars</h2><div class="card">
+  ${cals.calendars.map(c=>`<div class="set"><span style="font-size:22px">${esc(c.emoji)}</span><div class="l"><b>${esc(c.name)}</b><small>${c.error?'⚠️ '+esc(c.error):`${c.n} events · reminds ${c.remind?c.remind+' min before':'at start'}`}</small></div><button class="btn sm" data-ct="${c.id}">Tidy</button><button class="btn sm danger" data-cd="${c.id}">Remove</button></div>`).join('')||'<p class="sub" style="margin-top:0">Show Google, Apple or Outlook calendar events on your timeline. They refresh every 15 minutes.</p>'}
+  <div class="row" style="margin-top:10px"><button class="btn sm pri" id="calAdd">＋ Link a calendar</button>${cals.calendars.length?'<button class="btn sm" id="calSync">Refresh now</button>':''}</div>
+  ${feed?`<div style="margin-top:14px;border-top:1px solid var(--line);padding-top:14px"><b>See Pacely in your iPhone Calendar</b>
+  <p class="sub" style="margin:4px 0 10px">Tap the button and choose Subscribe. Your Pacely plans then show in the Calendar app too.</p>
+  <a class="btn pri block" id="feedAdd" href="${esc(feed.replace(/^https?:/,'webcal:'))}">📅 Add to iPhone Calendar</a>
+  <div class="codebox" style="margin-top:10px">${esc(feed.replace(/^https?:/,'webcal:'))}</div>
+  <button class="btn sm" style="margin-top:8px" id="feedCopy">Copy link</button>
+  ${location.protocol==='http:'?'<p class="sub" style="margin-top:8px">Tip: open Pacely through your https:// address first, so this link works when you’re away from home.</p>':''}</div>`:''}
+  ${LOCALMODE&&!IS_NATIVE?'<p class="sub" style="margin-top:10px">In a web browser, many calendar links can’t be read because of browser security. They work in the Pacely Mac app or with a Pacely server.</p>':''}</div>
+
+  ${feats.includes('numbers')?`<h2>Phone numbers</h2><div class="card">
+  ${numbers().length?numbers().map((n,i)=>`<div class="set"><div class="l"><b>📞 ${esc(n.label)}</b><small>${esc(n.number)} · shows for “${esc(n.words||n.label)}”</small></div><button class="btn sm" data-num="${i}">Edit</button></div>`).join(''):'<p class="sub" style="margin-top:0">Save numbers you call (GP surgery, HMRC, nursery). Activities that mention them get a big 📞 Call button.</p>'}
+  <button class="btn block" style="margin-top:10px" id="numAdd">＋ Add a number</button></div>`:''}
+  ${feats.includes('summary')?`<h2>How my week went</h2><div class="card"><p class="sub" style="margin-top:0">A plain summary of your plans, what got done, moods and what was hard. Share it with Gemini, a therapist or someone who supports you.</p>
+  <button class="btn block pri" id="meWeek">📊 Share how my week went</button></div>`:''}
+  ${shares?`<h2>Share with family</h2><div class="card">
+  ${shares.length?shares.map(x=>`<div class="share"><div class="row"><div style="flex:1"><b>💌 ${esc(x.name)}</b><div class="sub">${x.see==='own'?'Sees only what they add':'Sees your plans and can add to them'} · ${x.joined?'using Pacely on '+esc(x.device||'their phone'):x.invite_path?'invite waiting, works once':'not joined yet'}</div></div></div>
+    <div class="row" style="flex-wrap:wrap;gap:8px;margin-top:10px">${x.joined?`<button class="btn sm" data-shi="${esc(x.token)}" data-new="1">New invite</button>`:`<button class="btn sm pri" data-shi="${esc(x.token)}">Send app invite</button>`}
+    <button class="btn sm" data-shv="${esc(x.token)}" data-see="${x.see==='own'?'all':'own'}">${x.see==='own'?'Let them see my plans':'Only show what they add'}</button>
+    <button class="btn sm" data-shw="${esc(x.token)}" data-on="${x.web?0:1}">${x.web?'Turn off web page':'Also allow a web page'}</button>
+    ${x.web?`<button class="btn sm" data-shs="${esc(x.token)}">Send web link</button>`:''}<button class="btn sm danger" data-shd="${esc(x.token)}">Switch off</button></div></div>`).join('')
+  :'<p class="sub" style="margin-top:0">Invite someone (like your partner) to join you in the Pacely app. The invite works once, on one phone. They can add things to your plan and you get a reminder marked 💌 with their name. Things you mark Private stay hidden.</p>'}
+  <button class="btn ${shares.length?'':'pri'} block" style="margin-top:12px" id="shNew">＋ Invite someone</button></div>`:''}
+
+  ${feats.includes('travel')?`<h2>Getting about</h2><div class="card">
+  <p class="sub" style="margin-top:0">Pacely uses these to work out when to leave, and on office days it watches TfL and tells you if a delay changes when you need to go. Postcodes only go to free map services (postcodes.io, OpenStreetMap, TfL).</p>
+  <label class="f">Home postcode</label><input type="text" id="tvHome" value="${esc(S.me.travel.home)}" placeholder="e.g. SW1A 1AA" autocomplete="postal-code">
+  <label class="f">Work postcode</label><input type="text" id="tvWork" value="${esc(S.me.travel.work)}" placeholder="e.g. W1A 1AA">
+  <div class="row" style="margin-top:10px"><div style="flex:1"><label class="f" style="margin-top:0">Start work at</label><input type="time" id="tvStart" value="${esc(S.me.travel.work_start)}"></div>
+  <div style="flex:1"><label class="f" style="margin-top:0">Head home at</label><input type="time" id="tvHomeAt" value="${esc(S.me.travel.home_time||'15:00')}"></div></div>
+  <div class="row" style="margin-top:10px"><div style="flex:1"><label class="f" style="margin-top:0">Arrive early by</label><select id="tvBuf">${[0,5,10,15,20,30].map(m=>`<option value="${m}" ${S.me.travel.travel_buffer==m?'selected':''}>${m} min</option>`).join('')}</select></div></div>
+  <label class="f">I usually get about by</label><div class="choices">${[['car','🚗 Car'],['transit','🚆 Train, tube, bus'],['both','Show both']].map(([v,l])=>`<button class="choice ${S.me.travel.travel_by===v?'on':''}" data-tvby="${v}">${l}</button>`).join('')}</div>
+  <label class="f">Public transport I'm happy to take</label><div class="choices">${[['tube','Tube'],['elizabeth-line','Elizabeth line'],['overground','Overground'],['dlr','DLR'],['bus','Bus'],['national-rail','Trains'],['tram','Tram']].map(([v,l])=>`<button class="choice ${(S.me.travel.modes||[]).includes(v)?'on':''}" data-tvm="${v}">${l}</button>`).join('')}</div>
+  <p class="sub" style="margin-top:6px">Journeys only use these, plus walking.</p>
+  <div class="set"><div class="l"><b>Watch my route on office days</b><small>Checks TfL every 5 minutes before work and before you head home, and tells you if a delay changes things</small></div><button class="btn sm ${S.me.travel.commute?'pri':''}" id="tvCm">${S.me.travel.commute?'On':'Off'}</button></div>
+  <button class="btn block pri" id="tvSave" style="margin-top:12px">Save</button></div>`:''}
+  ${feats.includes('nudges')?`<h2>Gentle nudges</h2><div class="card">
+  <p class="sub" style="margin-top:0">Small reminders for the basics that are easy to forget when you're busy or hyperfocused.</p>
+  ${[['drink','💧 Drink some water','Every 2 hours, 10am to 8pm'],['eat','🍽️ Eat something','Breakfast 8:30, lunch 12:30, dinner 6:30'],['rest','🧘 Take a little pause','11am, 3pm and 7:30pm']].map(([k,t,d])=>`<div class="set"><div class="l"><b>${t}</b><small>${d}</small></div><button class="btn sm ${S.me.nudges[k]?'pri':''}" data-ndg="${k}">${S.me.nudges[k]?'On':'Off'}</button></div>`).join('')}</div>`:''}
+
+  <h2 id="aiSection">AI helper</h2><div class="card">
+  <div class="prov"><button data-prov="ollama" class="${S.ai.provider!=='gemini'?'on':''}"><b>🔒 Private</b><small>${LOCALMODE?'Runs on this computer with Ollama (free from ollama.com). Nothing leaves your device.':'Runs on your server. Nothing leaves your house.'} Slower, and no photos.</small></button>
+  <button data-prov="gemini" class="${S.ai.provider==='gemini'?'on':''}"><b>⚡ Gemini</b><small>Faster and smarter, reads photos. On the free key, Google may read what you send.</small></button></div>
+  <div class="set"><div class="l"><b>${S.ai.ok?'✅ Ready':'⏳ Not ready'}</b><small>${S.ai.ok?(S.ai.provider==='gemini'?`Using Google Gemini (${esc(S.ai.model)})`:`Runs privately ${LOCALMODE?'on this computer':'on your server'} using ${esc(S.ai.model)}`):esc(S.ai.error||'Checking…')}</small></div><button class="btn sm" id="aiCheck">Check</button></div>
+  <div class="set"><div class="l"><b>Test it</b><small>Asks the AI helper something tiny and tells you how long it took, or exactly why it didn't answer</small></div><button class="btn sm" id="aiTest">Test</button></div>
+  ${S.ai.provider==='gemini'?`
+  <label class="f">Gemini API key ${S.ai.has_key?'(saved)':''}</label>
+  <div class="row"><input type="password" id="gKey" placeholder="${S.ai.has_key?'•••••••• saved – paste a new one to change':'Paste your key here'}" autocomplete="off"><button class="btn sm pri" id="gSave" style="flex:none">Save</button></div>
+  <p class="sub" style="margin-top:8px">Get a free key: open <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a>, sign in with Google, tap <b>Create API key</b>, copy it and paste it here.</p>
+  <div class="set"><div class="l"><b>Gemini model</b><small>Pacely picks one automatically if this one isn’t available</small></div><input type="text" id="gModel" value="${esc(S.ai.model||'')}" style="width:170px;min-height:40px"></div>`:`
+  <div class="set"><div class="l"><b>Model</b><small>Bigger models are smarter but slower</small></div><input type="text" id="aiModel" value="${esc(S.ai.model||'llama3.2:3b')}" style="width:150px;min-height:40px"></div>`}</div>
+
+  <h2>Notifications</h2><div class="card">
+  ${LOCALMODE&&!IS_NATIVE?`<p style="margin-top:0">Pacely reminds you while it’s open, in a tab or installed as an app. Keep it open in the background during the day.</p>
+  <div class="set"><div class="l"><b>Reminders</b><small>${perm==='granted'?'On':perm==='denied'?'Blocked in your browser settings':perm==='unsupported'?'Not available in this browser':'Off'}</small></div>
+  ${perm==='granted'?'<button class="btn sm" id="meLocalTest">Test</button>':`<button class="btn sm pri" id="meLocalOn">Turn on</button>`}</div>`:IS_NATIVE?(window.PACELY_PLATFORM==='mac'?`<p style="margin:0 0 12px">🔔 The Pacely Mac app shows pop-up reminders and a countdown in your menu bar.</p><button class="btn block pri" id="nativeSet">💻 Mac app settings</button>`:`<p style="margin:0 0 12px">🔔 The Pacely iPhone app handles your reminders, widgets, Live Activities and Siri.</p><button class="btn block pri" id="nativeSet">📱 iPhone app settings</button>`):`
+  ${!standalone&&/iPhone|iPad/.test(navigator.userAgent)?`<p style="margin-top:0">📲 On iPhone, first add Pacely to your Home Screen: tap <b>Share</b> then <b>Add to Home Screen</b>. Or use the Pacely iPhone app.</p>`:''}
+  <div class="set"><div class="l"><b>Reminders in this browser</b><small>${perm==='granted'?'Allowed':perm==='denied'?'Blocked in settings':perm==='unsupported'?'Not available in this browser':'Not set up yet'} · ${S.me.subs} device(s) linked</small></div>
+  <button class="btn sm pri" id="meNotif">${perm==='granted'?'Re-link':'Turn on'}</button></div>
+  <div class="set"><div class="l"><b>Test</b><small>Send a test notification now</small></div><button class="btn sm" id="meTest">Send</button></div>`}</div>
+
+  <h2>Settings</h2><div class="card">
+  <div class="set"><div class="l"><b>Sounds</b><small>Your own sounds go in the sounds folder</small></div><button class="btn sm ${fxOn('sound')?'pri':''}" id="meSnd">${fxOn('sound')?'On':'Off'}</button></div>
+  ${IS_IOS||!IS_NATIVE?`<div class="set"><div class="l"><b>Gentle taps (haptics)</b><small>A small buzz when you press things</small></div><button class="btn sm ${fxOn('haptic')?'pri':''}" id="meHap">${fxOn('haptic')?'On':'Off'}</button></div>`:''}
+  ${IS_IOS?`<div class="set"><div class="l"><b>Calm countdown</b><small>Lock Screen shows "until 9:15" instead of a ticking clock. CarPlay always does.</small></div><button class="btn sm ${fxOn('calm')?'pri':''}" id="meCalm">${fxOn('calm')?'On':'Off'}</button></div>`:''}
+  ${feats.includes('allday')?`<div class="set"><div class="l"><b>Tick off repeating things by themselves</b><small>School runs and other repeats are marked done once their time is over</small></div><button class="btn sm ${S.me.auto_tick?'pri':''}" id="meAuto">${S.me.auto_tick?'On':'Off'}</button></div>`:''}
+  <div class="set"><div class="l"><b>Text style</b><small>Easier-to-read letters, with more space between them</small></div><select id="meFont" style="width:auto;min-height:40px">${[['standard','Standard'],['easy','Easy read'],['dyslexic','OpenDyslexic']].map(([v,l])=>`<option value="${v}" ${lsGet('font','standard')===v?'selected':''}>${l}</option>`).join('')}</select></div>
+  <div class="set"><div class="l"><b>Appearance</b></div><select id="meTheme" style="width:auto;min-height:40px">${[['auto','Match phone'],['light','Light'],['dark','Dark']].map(([v,l])=>`<option value="${v}" ${S.me.theme===v?'selected':''}>${l}</option>`).join('')}</select></div>
+  ${installEvt?'<div class="set"><div class="l"><b>Install Pacely</b><small>Add Pacely as an app on this computer or Android phone</small></div><button class="btn sm pri" id="meInstall">Install</button></div>':''}
+  ${LOCALMODE?'':'<div class="set"><div class="l"><b>Password</b><small>Change your Pacely password</small></div><button class="btn sm" id="mePw">Change</button></div>'}
+  <div class="set"><div class="l"><b>Where your plans are kept</b><small>${LOCALMODE?(IS_NATIVE?'On this Mac, in a file':'On this device, in this browser'):'On your Pacely server'}</small></div>${LOCALMODE?`<button class="btn sm" id="meWhere">Change</button>`:''}</div>
+  ${LOCALMODE&&lastBk!==null&&lastBk>=14?`<div class="set"><div class="l"><b>⚠️ Time for a backup</b><small>Your last saved copy was ${lastBk} days ago</small></div></div>`:''}
+  ${LOCALMODE&&lastBk===null?`<div class="set"><div class="l"><b>💾 Save a copy</b><small>${IS_NATIVE?'Pacely also keeps daily backups on this Mac.':'Browsers can lose data if you clear them. A saved copy keeps your plans safe.'}</small></div></div>`:''}
+  <div class="set"><div class="l"><b>Backup</b><small>Save everything as a file</small></div><button class="btn sm" id="meExp">Save a copy</button></div>
+  <div class="set"><div class="l"><b>Load a file</b><small>Add a backup to your plans, or replace them</small></div>${IS_NATIVE&&window.PACELY_PLATFORM==='mac'?'<button class="btn sm" id="meImpN">Load…</button>':'<label class="btn sm">Load…<input type="file" id="meImp" accept=".json,application/json" hidden></label>'}</div>
+  ${LOCALMODE?'':'<div class="set"><div class="l"><b>Log out</b></div><button class="btn sm danger" id="meOut">Log out</button></div>'}</div>
+  <p class="sub" style="text-align:center;margin:26px 0 8px">Pacely · self-hosted, no tracking, no ads, no subscription<br>Pacely 0.7.0 · made free and open source by Sam Fox, with Claude</p></div>`;
+  $('#meMood').onclick=moodSheet;$('#meReview').onclick=reviewSheet;
+  $('#meFont').onchange=e=>{applyFont(e.target.value);sfx('toggle-on')};
+  if($('#aiTest'))$('#aiTest').onclick=async()=>{try{const r=await aiCall('/api/ai/check',{});
+    await choose(`✅ The AI helper answered in ${r.seconds} seconds: “${esc(r.reply)}”`,[{label:'Great',value:true}])}catch(e){}};
+  document.querySelectorAll('[data-ndg]').forEach(b=>b.onclick=async()=>{const n=Object.assign({},S.me.nudges);n[b.dataset.ndg]=!n[b.dataset.ndg];
+    await api('/api/settings',{method:'PUT',body:{nudges:n}});sfx(n[b.dataset.ndg]?'toggle-on':'toggle-off');S.me=await api('/api/me');renderMe()});
+  let tvBy=S.me.travel?S.me.travel.travel_by:'car',tvCm=S.me.travel?S.me.travel.commute:true;
+  document.querySelectorAll('[data-tvby]').forEach(b=>b.onclick=()=>{tvBy=b.dataset.tvby;document.querySelectorAll('[data-tvby]').forEach(x=>x.classList.toggle('on',x===b))});
+  let tvModes=[...((S.me.travel&&S.me.travel.modes)||[])];
+  document.querySelectorAll('[data-tvm]').forEach(b=>b.onclick=()=>{const m=b.dataset.tvm;
+    if(tvModes.includes(m)){if(tvModes.length>1)tvModes=tvModes.filter(x=>x!==m)}else tvModes.push(m);
+    b.classList.toggle('on',tvModes.includes(m))});
+  if($('#tvCm'))$('#tvCm').onclick=()=>{tvCm=!tvCm;$('#tvCm').textContent=tvCm?'On':'Off';$('#tvCm').classList.toggle('pri',tvCm)};
+  if($('#tvSave'))$('#tvSave').onclick=async()=>{await api('/api/settings',{method:'PUT',body:{home:$('#tvHome').value,work:$('#tvWork').value,work_start:$('#tvStart').value,home_time:$('#tvHomeAt').value,
+    travel_buffer:+$('#tvBuf').value,travel_by:tvBy,commute:tvCm,modes:tvModes}});
+    S.me=await api('/api/me');
+    if(S.me.travel.home){try{const t=await api('/api/trip',{method:'POST',body:{place:S.me.travel.work||S.me.travel.home}});
+      toast(t.error?t.error:S.me.travel.work?`Saved. Work is about ${dur(t.minutes)} away`:'Saved')}catch(e){}}else toast('Saved');renderMe()};
+  $('#meSnd').onclick=()=>{fxSet('sound',!fxOn('sound'));if(fxOn('sound'))sfx('toggle-on');renderMe()};
+  if($('#meHap'))$('#meHap').onclick=()=>{fxSet('haptic',!fxOn('haptic'));sfx(fxOn('haptic')?'toggle-on':'toggle-off');haptic('success');renderMe()};
+  if($('#meCalm'))$('#meCalm').onclick=()=>{fxSet('calm',!fxOn('calm'));sfx(fxOn('calm')?'toggle-on':'toggle-off');native({type:'calm',on:fxOn('calm')});renderMe()};
+  document.querySelectorAll('[data-num]').forEach(b=>b.onclick=()=>numberSheet(numbers()[+b.dataset.num]));
+  if($('#numAdd'))$('#numAdd').onclick=()=>numberSheet(null);
+  if($('#meWeek'))$('#meWeek').onclick=shareWeek;
+  if($('#meAuto'))$('#meAuto').onclick=async()=>{await api('/api/settings',{method:'PUT',body:{auto_tick:!S.me.auto_tick}});S.me=await api('/api/me');renderMe()};
+  const sendInvite=async(url,name)=>{const text=`Join my Pacely plan: ${url}\nOpen it on your iPhone with Pacely installed. It works once, just for you.`;
+    if(IS_NATIVE&&window.PACELY_PLATFORM!=='mac'){native({type:'share',text});return}
+    if(navigator.share){try{await navigator.share({title:'Join my Pacely plan',text});return}catch(e){if(e.name==='AbortError')return}}copyText(text)};
+  const sendLink=async(t,name)=>{const url=shareURL(t);const text=`Here's a link to add things to my plan, or see what I've got on: ${url}\nTip: tap Share then "Add to Home Screen" so it's always there.`;
+    if(IS_NATIVE&&window.PACELY_PLATFORM!=='mac'){native({type:'share',text});return}
+    if(navigator.share){try{await navigator.share({title:'Add to my plan',text});return}catch(e){if(e.name==='AbortError')return}}copyText(text)};
+  if($('#shNew'))$('#shNew').onclick=()=>{
+    let see='all';
+    const draw=()=>{openSheet(`<h3>Invite someone</h3><p class="sub">They open the invite on their iPhone and Pacely joins your plan. It works once, on one phone, so it stays private.</p>
+      <label class="f">Who is it for?</label><input type="text" id="shName" placeholder="e.g. Alex" maxlength="40">
+      <label class="f">Your name, shown on their page</label><input type="text" id="shMe" value="${esc(S.me.my_name||'')}" placeholder="e.g. Sam" maxlength="40">
+      <label class="f">What can they see?</label><div class="choices"><button class="choice ${see==='all'?'on':''}" data-sse="all">Everything in my plan</button><button class="choice ${see==='own'?'on':''}" data-sse="own">Only what they add</button></div>
+      <p class="sub" style="margin-top:8px">Either way, they can add things for you and take back things they added. You can switch it off any time.</p>
+      <div style="display:grid;gap:10px;margin-top:20px"><button class="btn pri block" id="shMake">Make the invite</button><button class="btn block" id="shCancel">Cancel</button></div>`);
+      $('#sheetBody').querySelectorAll('[data-sse]').forEach(b=>b.onclick=()=>{const n=$('#shName').value,m=$('#shMe').value;see=b.dataset.sse;draw();$('#shName').value=n;$('#shMe').value=m});
+      $('#shCancel').onclick=closeSheet;
+      $('#shMake').onclick=async()=>{const name=$('#shName').value.trim();if(!name){toast('Who is it for?');return}
+        const r=await api('/api/shares',{method:'POST',body:{name,see,my_name:$('#shMe').value.trim()}});closeSheet();S.me=await api('/api/me');await renderMe();
+        toast(`Invite made for ${name}`,{label:'Send it',fn:()=>sendInvite(location.origin+r.invite_path,name)})}};
+    draw();setTimeout(()=>$('#shName')&&$('#shName').focus(),300)};
+  document.querySelectorAll('[data-shs]').forEach(b=>b.onclick=()=>sendLink(b.dataset.shs));
+  document.querySelectorAll('[data-shw]').forEach(b=>b.onclick=async()=>{await api('/api/shares/'+encodeURIComponent(b.dataset.shw),{method:'PUT',body:{web:b.dataset.on==='1'}});renderMe()});
+  document.querySelectorAll('[data-shi]').forEach(b=>b.onclick=async()=>{const t=b.dataset.shi,x=shares.find(z=>z.token===t);
+    if(b.dataset.new&&!await choose(`Make a new invite? ${esc(x.name)}'s phone will be signed out until they use it.`,[{label:'Make new invite',value:true}]))return;
+    let path=x.invite_path;if(!path||b.dataset.new){const r=await api('/api/shares/'+encodeURIComponent(t)+'/invite',{method:'POST',body:{}});path=r.invite_path;await renderMe()}
+    sendInvite(location.origin+path,x.name)});
+  document.querySelectorAll('[data-shc]').forEach(b=>b.onclick=()=>copyText(shareURL(b.dataset.shc)));
+  document.querySelectorAll('[data-shv]').forEach(b=>b.onclick=async()=>{await api('/api/shares/'+encodeURIComponent(b.dataset.shv),{method:'PUT',body:{see:b.dataset.see}});renderMe()});
+  document.querySelectorAll('[data-shd]').forEach(b=>b.onclick=async()=>{if(!await choose('Switch this link off? It stops working straight away.',[{label:'Switch off',value:true,cls:'danger'}]))return;
+    await api('/api/shares/'+encodeURIComponent(b.dataset.shd),{method:'DELETE'});renderMe()});
+  document.querySelectorAll('[data-md]').forEach(b=>b.onclick=async()=>{await api('/api/moods/'+b.dataset.md,{method:'DELETE'});go('me')});
+  document.querySelectorAll('[data-cd]').forEach(b=>b.onclick=async()=>{if(!await choose('Remove this calendar?',[{label:'Remove',value:true,cls:'danger'}]))return;await api('/api/calendars/'+b.dataset.cd,{method:'DELETE'});go('me')});
+  $('#calAdd').onclick=calSheet;
+  document.querySelectorAll('[data-ct]').forEach(b=>b.onclick=()=>calRules(cals.calendars.find(x=>x.id==b.dataset.ct)));
+  if($('#calSync'))$('#calSync').onclick=async()=>{const r=await api('/api/calendars/sync',{method:'POST',body:{}});const bad=r.results.filter(x=>x.error);toast(bad.length?`${bad[0].name}: ${bad[0].error}`:'Calendars refreshed');go('me')};
+  if($('#feedCopy'))$('#feedCopy').onclick=()=>copyText(feed.replace(/^https?:/,'webcal:'));
+  if(IS_NATIVE&&$('#feedAdd'))$('#feedAdd').onclick=e=>{e.preventDefault();native({type:'open',url:feed.replace(/^https?:/,'webcal:')})};
+  $('#aiCheck').onclick=async()=>{S.ai=await api('/api/ai/status');toast(S.ai.ok?'AI helper is ready':S.ai.error);go('me')};
+  const aiRefresh=async()=>{S.ai=await api('/api/ai/status');renderMe()};
+  document.querySelectorAll('[data-prov]').forEach(b=>b.onclick=async()=>{await api('/api/ai/settings',{method:'PUT',body:{provider:b.dataset.prov}});aiRefresh()});
+  if($('#aiModel'))$('#aiModel').onchange=async e=>{await api('/api/ai/settings',{method:'PUT',body:{model:e.target.value.trim()}});aiRefresh()};
+  if($('#gModel'))$('#gModel').onchange=async e=>{await api('/api/ai/settings',{method:'PUT',body:{gemini_model:e.target.value.trim()}});aiRefresh()};
+  if($('#gSave'))$('#gSave').onclick=async()=>{const k=$('#gKey').value.trim();if(!k){toast('Paste the key first');return}
+    await api('/api/ai/settings',{method:'PUT',body:{key:k}});S.ai=await api('/api/ai/status');toast(S.ai.ok?'Gemini is ready ⚡':S.ai.error);renderMe()};
+  if($('#meNotif'))$('#meNotif').onclick=enablePush;
+  if($('#nativeSet'))$('#nativeSet').onclick=()=>native({type:'settings'});
+  if($('#meTest'))$('#meTest').onclick=async()=>{const r=await api('/api/push/test',{method:'POST',body:{}});toast(r.sent?`Sent to ${r.sent} device(s)`:'No linked devices yet – tap Turn on first')};
+  $('#meTheme').onchange=async e=>{applyTheme(e.target.value);await api('/api/settings',{method:'PUT',body:{theme:e.target.value}})};
+  if($('#mePw'))$('#mePw').onclick=pwSheet;
+  if($('#meLocalOn'))$('#meLocalOn').onclick=async()=>{try{const p=await Notification.requestPermission();toast(p==='granted'?'Reminders are on 🔔':'Reminders weren’t allowed')}catch(e){}renderMe()};
+  if($('#meLocalTest'))$('#meLocalTest').onclick=()=>showLocalNote('Pacely','Reminders are working 🎉','test');
+  if($('#meWhere'))$('#meWhere').onclick=changeWhere;
+  $('#meExp').onclick=exportBackup;
+  if($('#meImpN'))$('#meImpN').onclick=()=>native({type:'importDb'});
+  if($('#meInstall'))$('#meInstall').onclick=async()=>{installEvt.prompt();try{await installEvt.userChoice}catch(e){}installEvt=null;renderMe()};
+  if($('#meOut'))$('#meOut').onclick=async()=>{await api('/api/logout',{method:'POST',body:{}});native({type:'logout'});showLogin()};
+  if($('#meImp'))$('#meImp').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;
+    let mode=await choose('Add this file to your plans, or replace them?',[{label:'Merge – keep mine and add anything new',value:'merge'},{label:'Replace – swap my plans for the file',value:'replace',cls:'danger'}]);
+    if(!mode)return;
+    try{const r=await doImport(await f.text(),mode);toast(r.mode==='merge'?`Merged – ${r.activities||0} new activities added`:'Replaced with the file');go('today')}catch(err){toast(err.message||'That file didn’t work')}};
+}
+
+/* ---------- backups and moving between devices ---------- */
+function backupName(){return `pacely-backup-${iso(new Date())}.json`}
+async function doExportText(){
+  if(MODE==='local'){await LOCAL.ready;return LOCAL.exportText()}
+  const r=await fetch('/api/export',{credentials:'same-origin'});if(!r.ok)throw new Error('Couldn’t make a backup');return await r.text();
+}
+window.pacelyExportText=doExportText;
+async function exportBackup(){
+  if(IS_NATIVE){native({type:'exportDb'});return}
+  try{const text=await doExportText();
+    const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type:'application/json'}));a.download=backupName();
+    document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000);
+    if(MODE==='local'){LOCAL.markBackedUp();S.me.last_backup=new Date().toISOString()}
+    toast('Saved a copy to your Downloads')}catch(e){toast(e.message||'Couldn’t save a copy')}
+}
+/** Load a backup file. mode is 'merge' (keep current, add new) or 'replace'. Used by the page and by the Mac app's File menu. */
+async function doImport(text,mode){
+  let data;try{data=typeof text==='string'?JSON.parse(text):text}catch(e){throw new Error('That file isn’t a Pacely backup.')}
+  if(MODE==='local'){const r=LOCAL.importData(data,mode);return r}
+  const feats=(S.me&&S.me.features)||[];
+  if(mode==='merge'&&!feats.includes('merge'))throw new Error('Your server needs updating before it can merge files. Choose Replace, or update the server first.');
+  return await api('/api/import',{method:'POST',body:Object.assign({},data,{mode})});
+}
+window.pacelyImport=async(text,mode)=>{const r=await doImport(text,mode);try{go(S.view)}catch(e){}return r};
+async function changeWhere(){
+  if(IS_NATIVE){native({type:'changeStorage'});return}
+  const v=await choose('Use a Pacely server instead?',[{label:'Save a copy of my plans first',value:'save'},{label:'Go to my server',value:'go'}]);
+  if(v==='save'){await exportBackup();return}
+  if(v==='go'){showWelcome();setTimeout(()=>{const d=document.querySelector('details');if(d)d.open=true},50)}
+}
+
+/* ---------- reminders when plans are kept in this browser ---------- */
+const remindedKeys=new Set(lsGet('reminded',[]));
+function showLocalNote(title,body,tag){
+  chime(false,true);toast(`${title}: ${body}`);
+  if(!('Notification' in window)||Notification.permission!=='granted')return;
+  const opts={body,tag,icon:'icon-192.png'};
+  (navigator.serviceWorker&&navigator.serviceWorker.getRegistration?navigator.serviceWorker.getRegistration():Promise.resolve(null))
+    .then(r=>{if(r&&r.showNotification)return r.showNotification(title,opts);new Notification(title,opts)})
+    .catch(()=>{try{new Notification(title,opts)}catch(e){}});
+}
+async function localReminderTick(){
+  if(MODE!=='local'||IS_NATIVE||!LOCAL.hasData)return;
+  let up;try{up=await LOCAL.call('GET','/api/upcoming')}catch(e){return}
+  const now=Date.now();let changed=false;
+  const fire=(key,when,title,body)=>{if(now>=when&&now-when<10*60000&&!remindedKeys.has(key)){remindedKeys.add(key);changed=true;showLocalNote(title,body,key)}};
+  for(const it of up.items){
+    if(it.done)continue;
+    const st=new Date(`${it.date}T${it.start}:00`).getTime(),en=st+it.duration*60000,label=`${it.emoji||''} ${it.title}`.trim(),k=`${it.id}-${it.date}-${it.start}`;
+    if(it.remind>0)fire(k+'-b',st-it.remind*60000,`Coming up in ${it.remind} min`,label);
+    if(it.remind>=0)fire(k+'-s',st,'Time to start',label);
+    if(it.end_alert&&it.duration>=10)fire(k+'-e',en-300000,'5 minutes left',`${label} – start wrapping up`);
+  }
+  if(up.focus&&up.focus.end)fire('focus-'+up.focus.end,up.focus.end,'Focus time is up',up.focus.title||'Nice work. Take a breath.');
+  if(changed)lsSet('reminded',[...remindedKeys].slice(-300));
+}
+setInterval(localReminderTick,20000);
+/* Tidy a linked calendar: working hours only, no repeating blocks, no copies of things already in Pacely */
+function calRules(cal){
+  const on=!!cal.hours_from;
+  openSheet(`<h3>${esc(cal.emoji)} Tidy ${esc(cal.name)}</h3>
+  <div class="set"><div class="l"><b>Only show my working hours</b><small>Things starting outside these hours don't show in Pacely</small></div><input type="checkbox" id="crOn" ${on?'checked':''} style="width:24px;height:24px"></div>
+  <div class="row"><input type="time" id="crFrom" value="${esc(cal.hours_from||'09:00')}"><input type="time" id="crTo" value="${esc(cal.hours_to||'15:30')}"></div>
+  <div class="set"><div class="l"><b>Hide repeating blocks</b><small>Like focus time or out-of-office every day. One-off meetings still show.</small></div><input type="checkbox" id="crRep" ${cal.hide_repeats?'checked':''} style="width:24px;height:24px"></div>
+  <div class="set"><div class="l"><b>Hide if it's already in Pacely</b><small>Something at the same time in Pacely? Only the Pacely one shows.</small></div><input type="checkbox" id="crDup" ${cal.hide_dupes!==0?'checked':''} style="width:24px;height:24px"></div>
+  <div style="display:grid;gap:10px;margin-top:16px"><button class="btn pri block" id="crSave">Save</button><button class="btn block" id="crX">Cancel</button></div>`);
+  $('#crX').onclick=closeSheet;
+  $('#crSave').onclick=async()=>{const o=$('#crOn').checked;await api('/api/calendars/'+cal.id,{method:'PUT',body:{hours_from:o?$('#crFrom').value:'',hours_to:o?$('#crTo').value:'',
+    hide_repeats:$('#crRep').checked,hide_dupes:$('#crDup').checked}});closeSheet();sfx('toggle-on');toast('Calendar tidied');go('me')};
+}
+function calSheet(){
+  let color=COLORS[9];
+  openSheet(`<h3>Link a calendar</h3>
+  <div class="card sub" style="margin-top:10px;line-height:1.5"><b>Google:</b> calendar.google.com on a computer → Settings → your calendar → <i>Secret address in iCal format</i>.<br>
+  <b>iCloud:</b> Calendar app → tap ⓘ by the calendar → turn on <i>Public Calendar</i> → Share Link.<br><b>Outlook:</b> Settings → Calendar → Shared calendars → Publish → ICS link.</div>
+  <label class="f">Name</label><input type="text" id="calName" placeholder="Work">
+  <label class="f">Calendar link</label><input type="text" id="calUrl" placeholder="https://… or webcal://…" autocapitalize="off" autocorrect="off">
+  <label class="f">Emoji</label><input type="text" id="calEm" value="📅" maxlength="8" style="width:80px">
+  <label class="f">Colour</label><div class="swatches">${COLORS.map(c=>`<button data-cc="${c}" style="--c:${c}" class="${c===color?'on':''}" aria-label="colour"></button>`).join('')}</div>
+  <label class="f">Remind me</label><div class="choices">${[[0,'At start'],[5,'5 min before'],[10,'10 min'],[15,'15 min'],[30,'30 min']].map(([v,l])=>`<button class="choice ${v===10?'on':''}" data-cr="${v}">${l}</button>`).join('')}</div>
+  <button class="btn pri block" style="margin-top:18px" id="calSave">Link calendar</button>`);
+  $('#sheetBody').querySelectorAll('[data-cc]').forEach(b=>b.onclick=()=>{color=b.dataset.cc;$('#sheetBody').querySelectorAll('[data-cc]').forEach(x=>x.classList.toggle('on',x===b))});
+  $('#sheetBody').querySelectorAll('[data-cr]').forEach(b=>b.onclick=()=>$('#sheetBody').querySelectorAll('[data-cr]').forEach(x=>x.classList.toggle('on',x===b)));
+  $('#calSave').onclick=async()=>{const btn=$('#calSave');btn.textContent='Linking…';btn.disabled=true;
+    try{const r=await api('/api/calendars',{method:'POST',body:{name:$('#calName').value||'Calendar',url:$('#calUrl').value,emoji:$('#calEm').value,color,remind:+document.querySelector('[data-cr].on').dataset.cr}});
+      closeSheet();toast(r.error?'Linked, but it couldn’t be read yet: '+r.error:`Linked – ${r.events} events found`);go('me')}
+    catch(e){btn.textContent='Link calendar';btn.disabled=false}};
+}
+function pwSheet(){
+  openSheet(`<h3>Change password</h3><label class="f">Current password</label><input type="password" id="pOld" autocomplete="current-password">
+  <label class="f">New password</label><input type="password" id="pNew" autocomplete="new-password"><button class="btn pri block" style="margin-top:18px" id="pSave">Save</button>`);
+  $('#pSave').onclick=async()=>{await api('/api/password',{method:'POST',body:{old:$('#pOld').value,new:$('#pNew').value}});closeSheet();toast('Password changed')};
+}
+function b64u(s){const p='='.repeat((4-s.length%4)%4);const b=atob((s+p).replace(/-/g,'+').replace(/_/g,'/'));return Uint8Array.from(b,c=>c.charCodeAt(0))}
+async function enablePush(){
+  try{
+    if(!('serviceWorker' in navigator)||!('PushManager' in window)){toast(/iPhone|iPad/.test(navigator.userAgent)?'Add Pacely to your Home Screen first, then open it from there':'This browser can’t do notifications');return}
+    if(!window.isSecureContext){toast('Notifications need the https:// address (your Cloudflare link)');return}
+    const p=await Notification.requestPermission();if(p!=='granted'){toast('Notifications weren’t allowed');go('me');return}
+    const reg=await navigator.serviceWorker.register('sw.js');await navigator.serviceWorker.ready;
+    let sub=await reg.pushManager.getSubscription();
+    if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64u(S.me.vapid)});
+    await api('/api/push/subscribe',{method:'POST',body:{sub:sub.toJSON()}});
+    toast('Reminders are on 🔔');go('me');
+  }catch(e){console.error(e);toast('Couldn’t turn on notifications: '+(e.message||e))}
+}
+
+/* keep the timeline fresh */
+setInterval(()=>{if(S.view==='today'&&!$('#sheet').classList.contains('on')&&document.visibilityState==='visible')loadDay().catch(()=>{})},60000);
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&S.me){if(S.view==='today')loadDay().catch(()=>{});if(S.view==='focus')renderFocus()}});
+start().catch(()=>{});
+</script>
+</body>
+</html>
