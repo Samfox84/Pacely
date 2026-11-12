@@ -104,7 +104,7 @@ final class LocalEngine: @unchecked Sendable {
                 this.pathname = i < 0 ? path : path.slice(0, i);
                 (i < 0 ? '' : path.slice(i + 1)).split('&').forEach(function (kv) {
                   if (!kv) return;
-                  var j = kv.indexOf('='), dec = function (x) { return decodeURIComponent(x.replace(/\+/g, ' ')); };
+                  var j = kv.indexOf('='), dec = function (x) { return decodeURIComponent(x.replace(/\\+/g, ' ')); };
                   var k = dec(j < 0 ? kv : kv.slice(0, j)); if (!(k in m)) m[k] = j < 0 ? '' : dec(kv.slice(j + 1));
                 });
                 this.searchParams = { get: function (k) { return k in m ? m[k] : null; }, has: function (k) { return k in m; } };
