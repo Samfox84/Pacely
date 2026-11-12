@@ -34,9 +34,12 @@ jobs:
         run: |
           VERSION=$(cat VERSION)
           TAG="v$VERSION"
-          NOTES=$(awk -v v="## $VERSION" 'index($0,v)==1{f=1;next} /^## /{if(f)exit} f' CHANGELOG.md)
+          # Friendly release notes in docs/releases/<version>.md make it a full release; otherwise the changelog entry, as a pre-release
+          if [ -f "docs/releases/$VERSION.md" ]; then NOTES=$(cat "docs/releases/$VERSION.md"); PRE=""; TITLE=$(head -c 0 /dev/null; echo "Pacely $VERSION")
+          else NOTES=$(awk -v v="## $VERSION" 'index($0,v)==1{f=1;next} /^## /{if(f)exit} f' CHANGELOG.md); PRE="--prerelease"; TITLE="Pacely $VERSION"; fi
           if gh release view "$TAG" >/dev/null 2>&1; then
             gh release upload "$TAG" "$RUNNER_TEMP/Pacely-Mac.zip" --clobber
+            if [ -z "$PRE" ]; then gh release edit "$TAG" --notes "$NOTES" --title "$TITLE" --prerelease=false --latest; fi
           else
-            gh release create "$TAG" "$RUNNER_TEMP/Pacely-Mac.zip" --title "Pacely $VERSION" --notes "$NOTES" --prerelease --target "$GITHUB_SHA"
+            gh release create "$TAG" "$RUNNER_TEMP/Pacely-Mac.zip" --title "$TITLE" --notes "$NOTES" $PRE --target "$GITHUB_SHA"
           fi
