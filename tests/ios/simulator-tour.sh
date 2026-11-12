@@ -81,6 +81,11 @@ xcrun simctl ui "$UDID" appearance light
 setd token -string ""; setd partnerToken -string "$SHARE"
 launch; shot 13-partner 7; alive
 
+# 4. "Just use it on this phone" (no server): first open, then after adding something
+xcrun simctl terminate "$UDID" $BUNDLE; setd partnerToken -string ""; setd token -string ""; setd server -string ""; setd localOnly -bool YES
+launch; shot 14-this-phone-today 9; alive
+url "pacely://me"; shot 15-this-phone-me 7; alive
+
 
 # Alex's page in Safari's engine
 (npm install --no-save playwright@1.48.2 >/dev/null 2>&1 && npx playwright install webkit >/dev/null 2>&1 && \
